@@ -52,15 +52,6 @@ public class GUI {
 
 
 
-//        addSALoginScreen();
-//        addBMLoginScreen();
-//        addCSHLoginScreen();
-//        addDEOLoginScreen();
-//
-//
-//        addSADashboardScreen();
-//        addBranchAddScreen();
-
         JFrame frame = new JFrame("Metro Pos System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -202,34 +193,34 @@ public class GUI {
         gbc.gridy = 4; // Row 4 (below Cashier button)
         insidePanel.add(dataEntryOpButton, gbc); // Add button to inside panel
 
-        // Add action listeners for buttons
-//        superAdminButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                showEntityScreen("SuperAdmin","SuperAdminLoginScreen");
-//            }
-//        });
-//
-//        branchManagerButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                showEntityScreen("BranchManager","BranchManagerLoginScreen");
-//            }
-//        });
-//
-//        cashierButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                showEntityScreen("Cashier","CashierLoginScreen");
-//            }
-//        });
-//
-//        dataEntryOpButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                showEntityScreen("DEO","DEOLoginScreen");
-//            }
-//        });
+
+        superAdminButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showEntityScreen("SuperAdmin","SuperAdminLoginScreen");
+            }
+        });
+
+        branchManagerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showEntityScreen("BranchManager","BranchManagerLoginScreen");
+            }
+        });
+
+        cashierButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showEntityScreen("Cashier","CashierLoginScreen");
+            }
+        });
+
+        dataEntryOpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showEntityScreen("DEO","DEOLoginScreen");
+            }
+        });
 
         // Add the inside panel to the main panel
         gbc.gridx = 0;
@@ -253,6 +244,27 @@ public class GUI {
         frame.setVisible(true);
     }
 
+    public void showEntityScreen(String entity, String internalScreenName) {
+        if(entity.equals("SuperAdmin")){
+            cardLayout.show(cardPanel, "SuperAdminPanel");
+            superAdminGUI.SAshowScreen(internalScreenName);
+        }
+        //else if(entity.equals("BranchManager")){
+//            cardLayout.show(cardPanel,"BranchManagerPanel");
+//            branchManagerGUI.BMshowScreen("BMLoginScreen");
+//        }
+//        else if(entity.equals("Cashier")){
+//            cardLayout.show(cardPanel,"CashierPanel");
+//            cashierGUI.CashiershowScreen("CashierLoginScreen");
+//        }
+//        else if(entity.equals("DEO")){
+//            cardLayout.show(cardPanel,"DEOPanel");
+//            dataEntryOpGUI.DEOshowScreen("DEOLoginScreen");
+//        }
+        else{
+            displayMessage("Invalid Entity Type");
+        }
+    }
 
 }
 
