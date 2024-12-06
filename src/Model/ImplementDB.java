@@ -112,5 +112,18 @@ public class ImplementDB {
         }
     }
 
-
+    public boolean isPasswordChanged(String email) {
+        String query = "SELECT passwordChanged FROM Employees WHERE email = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("passwordChanged");
+            }
+            return false;
+        } catch (SQLException e) {
+            System.out.println("Error checking password status: " + e.getMessage());
+            return false;
+        }
+    }
 }
