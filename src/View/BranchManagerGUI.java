@@ -270,4 +270,211 @@ public class BranchManagerGUI {
 
         BranchManagerPanel.add(mainpanel, "BranchAddScreen");
     }
+    public void displayMessage(String str) {
+        JFrame frame = new JFrame("ERROR !");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        JLabel message = new JLabel(str, SwingConstants.CENTER);
+        message.setForeground(Color.RED);
+        frame.setSize(350, 200);
+        frame.add(message);
+        frame.setVisible(true);
+    }
+
+    public void addBMDashboardScreen(){
+        JPanel mainpanel = new JPanel();
+        mainpanel.setLayout(new GridBagLayout());
+        mainpanel.setBackground(Color.white);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        topPanel.setBackground(color2);
+        topPanel.setLayout(new BorderLayout());
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20,20,10,20));
+        JLabel welcomelabel = new JLabel("Welcome to Branch Manager Dashboard",SwingConstants.CENTER);
+        welcomelabel.setFont(new Font("Helvetica",Font.BOLD,38));
+        welcomelabel.setForeground(color1);
+        topPanel.add(welcomelabel,BorderLayout.CENTER);
+
+        JButton backButton = new JButton();
+        ImageIcon iconimg = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        backButton.setIcon(iconimg);
+        backButton.setPreferredSize(new Dimension(55, 55));
+        backButton.setFocusPainted(false);
+        topPanel.add(backButton,BorderLayout.WEST);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                linkerObj.showEmployeeOptionsMenu();
+            }
+        });
+
+        JButton changePasswordButton = new JButton();
+        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\settings-50.png");
+        changePasswordButton.setIcon(icon);
+        changePasswordButton.setPreferredSize(new Dimension(55, 55));
+        changePasswordButton.setFocusPainted(false);
+        topPanel.add(changePasswordButton,BorderLayout.EAST);
+
+        changePasswordButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
+
+                JPasswordField currentPassField = new JPasswordField();
+                JPasswordField newPassField = new JPasswordField();
+                JPasswordField confirmPassField = new JPasswordField();
+
+                panel.add(new JLabel("Current Password:"));
+                panel.add(currentPassField);
+                panel.add(new JLabel("New Password:"));
+                panel.add(newPassField);
+                panel.add(new JLabel("Confirm Password:"));
+                panel.add(confirmPassField);
+
+                int result = JOptionPane.showConfirmDialog(null, panel,
+                        "Change Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String currentPass = new String(currentPassField.getPassword());
+                    String newPass = new String(newPassField.getPassword());
+                    String confirmPass = new String(confirmPassField.getPassword());
+
+                    if (currentPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "All fields are required!");
+                        return;
+                    }
+
+                    if (!newPass.equals(confirmPass)) {
+                        JOptionPane.showMessageDialog(null, "New passwords do not match!");
+                        return;
+                    }
+
+                    if (linkerObj.validateCurrentPassword(getbranchID(), getEmail(), currentPass)) {
+                        if (linkerObj.updatePassword(getbranchID(), getEmail(), newPass)) {
+                            JOptionPane.showMessageDialog(null, "Password updated successfully!");
+                            setPassword(newPass);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Failed to update password!");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Current password is incorrect!");
+                    }
+                }
+            }
+        });
+
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.4; // Takes 40% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(topPanel,gbc);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 50));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
+        bottomPanel.setBackground(color4);
+
+        JButton addCashierbutton = new JButton("Add Cashier");
+        addCashierbutton.setBackground(color3);
+        addCashierbutton.setBorder(BorderFactory.createLineBorder(color2,5));
+        addCashierbutton.setFont(new Font("Helvetica",Font.BOLD,28));
+        addCashierbutton.setForeground(color2);
+        addCashierbutton.setFocusPainted(false);
+        addCashierbutton.setPreferredSize(new Dimension(250,250));
+
+        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\cashier-64.png");
+        addCashierbutton.setIcon(icon1);
+        addCashierbutton.setHorizontalTextPosition(SwingConstants.CENTER);  // Center text horizontally
+        addCashierbutton.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+        JButton addDEObutton = new JButton("Add Data Entry Op");
+        addDEObutton.setBackground(color3);
+        addDEObutton.setBorder(BorderFactory.createLineBorder(color2,5));
+        addDEObutton.setFont(new Font("Helvetica",Font.BOLD,26));// reduced size a bit to fit thetext from 28 to 26
+        addDEObutton.setForeground(color2);
+        addDEObutton.setPreferredSize(new Dimension(250,250));
+        addDEObutton.setFocusPainted(false);
+
+        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\data-entry-50.png");
+        addDEObutton.setIcon(icon2);
+        addDEObutton.setHorizontalTextPosition(SwingConstants.CENTER);  // Center text horizontally
+        addDEObutton.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+        JButton viewStaffbutton = new JButton("View Staff");
+        viewStaffbutton.setBackground(color3);
+        viewStaffbutton.setBorder(BorderFactory.createLineBorder(color2,5));
+        viewStaffbutton.setFont(new Font("Helvetica",Font.BOLD,28));
+        viewStaffbutton.setForeground(color2);
+        viewStaffbutton.setFocusPainted(false);
+        viewStaffbutton.setPreferredSize(new Dimension(250,250));
+
+        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\staff-50.png");
+        viewStaffbutton.setIcon(icon3);
+        viewStaffbutton.setHorizontalTextPosition(SwingConstants.CENTER);
+        viewStaffbutton.setVerticalTextPosition(SwingConstants.BOTTOM);// Center text horizontally
+
+        JButton viewReportsbutton = new JButton("View Reports");
+        viewReportsbutton.setBackground(color3);
+        viewReportsbutton.setBorder(BorderFactory.createLineBorder(color2,5));
+        viewReportsbutton.setFont(new Font("Helvetica",Font.BOLD,28));
+        viewReportsbutton.setForeground(color2);
+        viewReportsbutton.setFocusPainted(false);
+        viewReportsbutton.setPreferredSize(new Dimension(250,250));
+
+        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\reports-50.png");
+        viewReportsbutton.setIcon(icon4);
+        viewReportsbutton.setHorizontalTextPosition(SwingConstants.CENTER);
+        viewReportsbutton.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+        bottomPanel.add(addCashierbutton);
+        bottomPanel.add(addDEObutton);
+        bottomPanel.add(viewStaffbutton);
+        bottomPanel.add(viewReportsbutton);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.6; // Takes 70% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(bottomPanel, gbc);
+
+        addCashierbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BMshowScreen("addCashierScreen");
+            }
+        });
+
+        addDEObutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BMshowScreen("addDEOScreen");
+            }
+        });
+
+        viewStaffbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BMshowScreen("ViewStaffScreen");
+            }
+        });
+
+        viewReportsbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BMshowScreen("ViewReportsScreen");
+            }
+        });
+
+        BranchManagerPanel.add(mainpanel, "BMDashboardScreen");
+    }
 }
