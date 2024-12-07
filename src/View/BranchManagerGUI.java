@@ -40,5 +40,10 @@ public class BranchManagerGUI {
 
     }
 
-
+    public void setBranchID(int Id){
+        this.branchId = Id;
+    }
+    public void setEmail(String Email){
+        this.Email = Email;
+    }
 }
