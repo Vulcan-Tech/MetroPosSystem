@@ -81,4 +81,19 @@ public void setBranchID(int Id){
         }
         DEOcardLayout.show(DEOPanel, screenName);
     }
+
+public JPanel DEOgetPanel() {
+        return DEOPanel;
+    }
+
+    public void displayMessage(String str) {
+        JFrame frame = new JFrame("ERROR !");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        JLabel message = new JLabel(str, SwingConstants.CENTER);
+        message.setForeground(Color.RED);
+        frame.setSize(350, 200);
+        frame.add(message);
+        frame.setVisible(true);
+    }
 }
