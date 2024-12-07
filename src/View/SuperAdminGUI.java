@@ -374,5 +374,163 @@ public class SuperAdminGUI {
     public JPanel SAgetPanel() {
         return SuperAdminPanel;
     }
+    public void addBranchAddScreen(){
+        JPanel mainpanel = new JPanel();
+        mainpanel.setLayout(new GridBagLayout());
+        mainpanel.setBackground(Color.white);
 
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        topPanel.setBackground(color2);
+        topPanel.setLayout(new BorderLayout());
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20,20,10,20));
+        JLabel welcomelabel = new JLabel("ADD BRANCH MENU",SwingConstants.CENTER);
+        welcomelabel.setFont(new Font("Helvetica",Font.BOLD,38));
+        welcomelabel.setForeground(color1);
+        topPanel.add(welcomelabel,BorderLayout.CENTER);
+
+        JButton backButton = new JButton();
+        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        backButton.setIcon(icon);
+        backButton.setPreferredSize(new Dimension(55, 55));
+        backButton.setFocusPainted(false);
+        topPanel.add(backButton,BorderLayout.WEST);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SAshowScreen("SADashboardScreen");
+            }
+        });
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.4; // Takes 40% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(topPanel,gbc);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel,BoxLayout.Y_AXIS));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
+        bottomPanel.setBackground(color4);
+
+        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\city-buildings-50.png");
+        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\location-48.png");
+        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\phone-48.png");
+
+        JLabel iconLabel1 = new JLabel(icon1);
+        JLabel iconLabel2 = new JLabel(icon2);
+        JLabel iconLabel3 = new JLabel(icon3);
+
+        JTextField cityField = new JTextField(30);
+        cityField.setBorder(BorderFactory.createTitledBorder("City"));
+        cityField.setBackground(color3);
+        cityField.setFont(new Font("Helvetica",Font.PLAIN,18));
+        cityField.setPreferredSize(new Dimension(250, 60));
+
+        JTextField addressField = new JTextField(30);
+        addressField.setBorder(BorderFactory.createTitledBorder("Address"));
+        addressField.setBackground(color3);
+        addressField.setFont(new Font("Helvetica",Font.PLAIN,18));
+        addressField.setPreferredSize(new Dimension(250, 60));
+
+        JTextField phoneNumField = new JTextField(30);
+        phoneNumField.setBorder(BorderFactory.createTitledBorder("PhoneNumber"));
+        phoneNumField.setBackground(color3);
+        phoneNumField.setFont(new Font("Helvetica",Font.PLAIN,18));
+        phoneNumField.setPreferredSize(new Dimension(250, 60));
+
+        // Panel for city field and icon
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel1.add(iconLabel1);
+        panel1.setBackground(color4);
+        panel1.add(cityField);
+        panel1.setPreferredSize(new Dimension(icon1.getIconWidth() + cityField.getPreferredSize().width, 60));
+        panel1.setMaximumSize(new Dimension(icon2.getIconWidth() + addressField.getPreferredSize().width, 60));
+        panel1.setMinimumSize(new Dimension(icon2.getIconWidth() + addressField.getPreferredSize().width, 60));
+        panel1.revalidate();
+        panel1.repaint();
+
+        // Panel for address field and icon
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel2.add(iconLabel2);
+        panel2.setBackground(color4);
+        panel2.add(addressField);
+        panel2.setPreferredSize(new Dimension(icon2.getIconWidth() + addressField.getPreferredSize().width, 60));
+        panel2.setMaximumSize(new Dimension(icon2.getIconWidth() + addressField.getPreferredSize().width, 60));
+        panel2.setMinimumSize(new Dimension(icon2.getIconWidth() + addressField.getPreferredSize().width, 60));
+        panel2.revalidate();
+        panel2.repaint();
+
+        // Panel for phone number field and icon
+        JPanel panel3 = new JPanel();
+        panel3.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel3.add(iconLabel3);
+        panel3.add(phoneNumField);
+        panel3.setBackground(color4);
+        panel3.setPreferredSize(new Dimension(icon3.getIconWidth() + phoneNumField.getPreferredSize().width, 60));
+        panel3.setMaximumSize(new Dimension(icon2.getIconWidth() + addressField.getPreferredSize().width, 60));
+        panel3.setMinimumSize(new Dimension(icon2.getIconWidth() + addressField.getPreferredSize().width, 60));
+        panel3.revalidate();
+        panel3.repaint();
+
+        JButton proceedNextButton = new JButton("Proceed Next");
+        proceedNextButton.setPreferredSize(new Dimension(300,60));
+        proceedNextButton.setMinimumSize(new Dimension(300,60));
+        proceedNextButton.setBackground(color2);
+        proceedNextButton.setForeground(color1);
+        proceedNextButton.setFont(new Font("Helvetica",Font.BOLD,20));
+        proceedNextButton.setMaximumSize(new Dimension(300, 60));
+        bottomPanel.revalidate();
+        bottomPanel.repaint();
+
+        bottomPanel.add(Box.createVerticalStrut(80));
+        bottomPanel.add(panel1);
+        bottomPanel.add(Box.createVerticalStrut(30));
+        bottomPanel.add(panel2);
+        bottomPanel.add(Box.createVerticalStrut(30));
+        bottomPanel.add(panel3);
+        bottomPanel.add(Box.createVerticalStrut(50));
+        bottomPanel.add(proceedNextButton);
+
+        panel1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        proceedNextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        proceedNextButton.setFocusPainted(false);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.6; // Takes 70% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(bottomPanel, gbc);
+
+        proceedNextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pnum = phoneNumField.getText();
+                city = cityField.getText();
+                address = addressField.getText();
+                if(!linkerObj.isValidPhoneNumber(pnum)){
+                    String str = "Invalid PhoneNum";
+                    displayMessage(str);
+                }
+                else {
+                    CardLayout cl = (CardLayout) SuperAdminPanel.getLayout();
+                    cl.show(SuperAdminPanel, "addBranchManagerScreen");
+                }
+            }
+        });
+
+        SuperAdminPanel.add(mainpanel, "BranchAddScreen");
+    }
 }
