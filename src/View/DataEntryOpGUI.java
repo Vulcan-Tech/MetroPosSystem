@@ -72,4 +72,13 @@ public void setBranchID(int Id){
     public int getVendorID(){
         return vendorID;
     }
+
+    public void DEOshowScreen(String screenName) {
+        if (screenName.equals("addProductsScreen")) {
+            refreshVendorTable();
+        } else if(screenName.equals("modifyProductsScreen")){
+            refreshProductTable(model);
+        }
+        DEOcardLayout.show(DEOPanel, screenName);
+    }
 }
