@@ -55,5 +55,21 @@ public void setBranchID(int Id){
     public void setEmail(String Email){
         this.Email = Email;
     }
+ 
 
+ public int getbranchID(){
+        return branchId;
+    }
+    public String getEmail(){
+        return Email;
+    }
+    public String getPassword(){
+        return password;
+    }
+    public void  setvendorID(int vendorID){
+        this.vendorID = vendorID;
+    }
+    public int getVendorID(){
+        return vendorID;
+    }
 }
