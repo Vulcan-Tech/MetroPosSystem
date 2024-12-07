@@ -46,4 +46,17 @@ public class BranchManagerGUI {
     public void setEmail(String Email){
         this.Email = Email;
     }
+    public void setPassword(String password){
+        this.password = password;
+    }
+
+    public int getbranchID(){
+        return branchId;
+    }
+    public String getEmail(){
+        return Email;
+    }
+    public String getPassword(){
+        return password;
+    }
 }
