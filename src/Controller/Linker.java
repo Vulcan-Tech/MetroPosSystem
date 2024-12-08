@@ -173,4 +173,11 @@ public class Linker {
     public Object[][] searchProductsforBillfromDB(String str){
         return dbObj.searchProductsforBill(str);
     }
+    public int getStock(String name, String company, double price) {
+        return dbObj.getProductStock(name, company, price);
+    }
+
+    public boolean updateStock(String name, String company, double price, int quantitySold) {
+        return dbObj.updateStockAfterBill(name, company, price, quantitySold);
+    }
 }
