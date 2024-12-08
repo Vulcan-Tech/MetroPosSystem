@@ -854,4 +854,89 @@ public class BranchManagerGUI {
 
         BranchManagerPanel.add(mainpanel, "addDEOScreen");
     }
+    public void addViewStaffScreen(){
+        JPanel mainpanel = new JPanel();
+        mainpanel.setLayout(new GridBagLayout());
+        mainpanel.setBackground(Color.white);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        topPanel.setBackground(color2);
+        topPanel.setLayout(new BorderLayout());
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20,20,10,20));
+        JLabel welcomelabel = new JLabel("Branch Staff List",SwingConstants.CENTER);
+        welcomelabel.setFont(new Font("Helvetica",Font.BOLD,38));
+        welcomelabel.setForeground(color1);
+        topPanel.add(welcomelabel,BorderLayout.CENTER);
+
+        JButton backButton = new JButton();
+        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        backButton.setIcon(icon);
+        backButton.setPreferredSize(new Dimension(55, 55));
+        backButton.setFocusPainted(false);
+        topPanel.add(backButton,BorderLayout.WEST);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BMshowScreen("BMDashboardScreen");
+            }
+        });
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.4; // Takes 40% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(topPanel,gbc);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BorderLayout());
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
+        bottomPanel.setBackground(color4);
+
+        System.out.println("Current Branch ID for staff view: " + branchId);
+
+        String[] columnNames = {"EmployeeID", "Name", "Email", "Salary", "Role"};
+        DefaultTableModel Model = new DefaultTableModel(columnNames, 0);
+
+        // Get employee list for current branch
+        List<Employee> empList = linkerObj.employeelist(branchId);
+        System.out.println("Found " + empList.size() + " employees");
+
+        // Add each employee to the table model
+        for(Employee emp : empList) {
+            Object[] rowData = {
+                    emp.getEmployeeId(),
+                    emp.getName(),
+                    emp.getEmail(),
+                    emp.getSalary(),
+                    emp.getRole()
+            };
+            Model.addRow(rowData);
+        }
+
+        // Configure table display properties
+        JTable table = new JTable(Model);
+        table.setFillsViewportHeight(true);
+        table.setRowHeight(30);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        bottomPanel.add(scrollPane, BorderLayout.CENTER);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.6; // Takes 70% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(bottomPanel, gbc);
+
+        BranchManagerPanel.add(mainpanel, "ViewStaffScreen");
+    }
 }
