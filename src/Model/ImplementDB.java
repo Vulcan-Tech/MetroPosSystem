@@ -1,8 +1,6 @@
 package Model;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ImplementDB {
     protected String url = "jdbc:mysql://localhost:3306/MetroPosDB";
@@ -123,6 +121,21 @@ public class ImplementDB {
             return false;
         } catch (SQLException e) {
             System.out.println("Error checking password status: " + e.getMessage());
+            return false;
+        }
+    }
+    public boolean validateCurrentPassword(int branchId, String email, String currentPassword) {
+        try {
+            String query = "SELECT * FROM Employees WHERE branch_id = ? AND email = ? AND password = ?";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, branchId);
+            pst.setString(2, email);
+            pst.setString(3, currentPassword);
+
+            ResultSet rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
