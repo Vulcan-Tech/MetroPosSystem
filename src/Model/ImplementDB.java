@@ -1,6 +1,7 @@
 package Model;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ImplementDB {
     protected String url = "jdbc:mysql://localhost:3306/MetroPosDB";
@@ -210,6 +211,7 @@ public Object[][] getVendorsTableData() {
                 onlineDB.executeQuery(onlineQuery);
                 return true;
     }
+
     public Object[][] searchProducts(String searchText) {
         String query = "SELECT product_id, name, category, original_price, sale_price, stock_quantity " +
                 "FROM Products WHERE name LIKE ? OR category LIKE ?";
@@ -240,4 +242,63 @@ public Object[][] getVendorsTableData() {
 
         return results.toArray(new Object[0][]);
     }
+
+    public boolean validateSACurrentPassword(String currentPass) {
+        String query = "SELECT * FROM Employees WHERE role = 'SuperAdmin' AND password = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, currentPass);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println("Error validating password: " + e.getMessage());
+            return false;
+        }
+    }
+    public boolean updateSAPassword(String newPass) {
+        System.out.println("1. Starting password update");
+        String query = "UPDATE Employees SET password = ? WHERE role = 'SuperAdmin'";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, newPass);
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("2. Local update complete. Rows affected: " + rowsAffected);
+            System.out.println("3. OnlineDB object exists: " + (onlineDB != null));
+
+            if(rowsAffected > 0 && onlineDB != null) {
+                String onlineQuery = String.format(
+                        "UPDATE Employees SET password = '%s' WHERE role = 'SuperAdmin'",
+                        newPass);
+                System.out.println("4. Sending to online DB: " + onlineQuery);
+                onlineDB.executeQuery(onlineQuery);
+                System.out.println("5. Online update complete");
+            }
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error in updateSAPassword: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean updatePasswordAndStatus(String email, String newPass) {
+        String query = "UPDATE Employees SET password = ?, passwordChanged = true WHERE email = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, newPass);
+            pstmt.setString(2, email);
+            System.out.println("Changing password in the local db");
+            int rowsAffected = pstmt.executeUpdate();
+
+            if(rowsAffected > 0) {
+                //&& onlineDB != null
+                String onlineQuery = String.format(
+                        "UPDATE Employees SET password = '%s', passwordChanged = true WHERE email = '%s'",
+                        newPass, email);
+                onlineDB.executeQuery(onlineQuery);
+            }
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating password and status: " + e.getMessage());
+            return false;
+        }
+
+    }
+    
 }

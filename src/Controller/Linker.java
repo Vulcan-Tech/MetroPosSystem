@@ -131,5 +131,31 @@ public class Linker {
             return false;
         }
     }
+    public boolean processReturn(int saleId, int productId, int returnQuantity) {
+        return dbObj.processReturn(saleId, productId, returnQuantity);
+    }
+    public Object[][] getSalesData() {
+        return dbObj.getSalesData();
+    }
 
+    public Object[][] getSaleItems(int saleId) {
+        return dbObj.getSaleItems(saleId);
+    }
+    public boolean saveBill(ArrayList<Object[]> billItems) {
+        return dbObj.saveBill(billItems);
+    }
+    public double[] getDailySales(int branchId) {
+        return dbObj.getDailySales(branchId);
+    }
+
+    public double[] getWeeklySales(int branchId) {
+        return dbObj.getWeeklySales(branchId);
+    }
+
+    public double[] getMonthlySales(int branchId) {
+        return dbObj.getMonthlySales(branchId);
+    }
+    public int createSaleRecord(int employeeId, int branchId, double totalAmount) {
+        return dbObj.createSaleRecord(employeeId, branchId, totalAmount);
+    }
 }
