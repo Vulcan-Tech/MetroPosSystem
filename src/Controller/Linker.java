@@ -134,4 +134,11 @@ public class Linker {
     public boolean processReturn(int saleId, int productId, int returnQuantity) {
         return dbObj.processReturn(saleId, productId, returnQuantity);
     }
+    public Object[][] getSalesData() {
+        return dbObj.getSalesData();
+    }
+
+    public Object[][] getSaleItems(int saleId) {
+        return dbObj.getSaleItems(saleId);
+    }
 }
