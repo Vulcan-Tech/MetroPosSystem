@@ -892,4 +892,46 @@ public class ImplementDB {
         return monthlySales;
     }
 
+    public boolean doesEmailExist(String email) {
+        String query = "SELECT COUNT(*) FROM Employees WHERE email = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking email existence: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean doesEmailExistVendors(String email) {
+        String query = "SELECT COUNT(*) FROM Vendors WHERE email = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking email existence: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean updateProductPrices(int productId, double newOriginalPrice, double newSalePrice) {
+        try {
+            String formattedQuery = String.format(
+                    "UPDATE Products SET original_price = %.2f, sale_price = %.2f WHERE product_id = %d",
+                    newOriginalPrice, newSalePrice, productId);
+            onlineDB.executeQuery(formattedQuery);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }
