@@ -831,5 +831,65 @@ public class ImplementDB {
         }
     }
 
+    public double[] getDailySales(int branchId) {
+        double[] dailySales = new double[31];
+        String query = "SELECT DAY(sale_date) as day, SUM(total_amount) as total " +
+                "FROM Sales WHERE branch_id = ? " +
+                "AND MONTH(sale_date) = MONTH(CURRENT_DATE()) " +
+                "AND YEAR(sale_date) = YEAR(CURRENT_DATE()) " +
+                "GROUP BY DAY(sale_date)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, branchId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int day = rs.getInt("day");
+                dailySales[day-1] = rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting daily sales: " + e.getMessage());
+        }
+        return dailySales;
+    }
+
+    public double[] getWeeklySales(int branchId) {
+        double[] weeklySales = new double[7];
+        String query = "SELECT DAYOFWEEK(sale_date) as day, SUM(total_amount) as total " +
+                "FROM Sales WHERE branch_id = ? " +
+                "AND sale_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) " +
+                "GROUP BY DAYOFWEEK(sale_date)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, branchId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int day = rs.getInt("day");
+                weeklySales[day-1] = rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting weekly sales: " + e.getMessage());
+        }
+        return weeklySales;
+    }
+
+    public double[] getMonthlySales(int branchId) {
+        double[] monthlySales = new double[12];
+        String query = "SELECT MONTH(sale_date) as month, SUM(total_amount) as total " +
+                "FROM Sales WHERE branch_id = ? " +
+                "AND YEAR(sale_date) = YEAR(CURRENT_DATE()) " +
+                "GROUP BY MONTH(sale_date)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, branchId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int month = rs.getInt("month");
+                monthlySales[month-1] = rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting monthly sales: " + e.getMessage());
+        }
+        return monthlySales;
+    }
 
 }
