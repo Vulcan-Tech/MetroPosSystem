@@ -150,6 +150,7 @@ public class ImplementDB {
         return true;
     }
 
+
 public Object[][] getVendorsTableData() {
         ArrayList<Vendor> vendors = new ArrayList<>();
         Object[][] tableData = null;
@@ -363,4 +364,27 @@ public Object[][] getVendorsTableData() {
             return null;
         }
     }
+
+    public Object[][] searchProductsforBill(String searchText) {
+        ArrayList<Object[]> productList = new ArrayList<>();
+        String query = "SELECT name, category, sale_price FROM Products WHERE name LIKE ? OR category LIKE ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            String searchPattern = "%" + searchText + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] product = new Object[4];
+                product[0] = rs.getString("name");
+                product[1] = rs.getString("category");
+                product[2] = rs.getDouble("sale_price");
+                product[3] = "Add";
+                productList.add(product);
+            }
+            return productList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error searching products: " + e.getMessage());
+            return new Object[0][0];
+        }
+    }
 }
