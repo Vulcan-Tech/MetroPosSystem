@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import static java.lang.Integer.parseInt;
 
@@ -50,7 +51,20 @@ public class GUI {
         addSplashScreen();
         addEmployeeOptionsMenu();
 
+        cardPanel.add(superAdminGUI.SAgetPanel(), "SuperAdminPanel");
+        cardPanel.add(branchManagerGUI.BMgetPanel(), "BranchManagerPanel");
+        cardPanel.add(cashierGUI.CashiergetPanel(),"CashierPanel");
+        cardPanel.add(dataEntryOpGUI.DEOgetPanel(),"DEOPanel");
 
+
+//        addSALoginScreen();
+//        addBMLoginScreen();
+//        addCSHLoginScreen();
+//        addDEOLoginScreen();
+//
+//
+//        addSADashboardScreen();
+//        addBranchAddScreen();
 
         JFrame frame = new JFrame("Metro Pos System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,7 +88,10 @@ public class GUI {
         splashPanel.setLayout(new BoxLayout(splashPanel,BoxLayout.Y_AXIS));
         splashPanel.setBackground(color4);
 
-        ImageIcon image = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\metro.png");
+        File rootDirectory = new File("/");
+        System.out.println("Root Directory Path: " + rootDirectory.getAbsolutePath());
+
+        ImageIcon image = new ImageIcon(getClass().getResource("/metro.png"));
         JLabel imglabel = new JLabel(image);
         imglabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -193,7 +210,7 @@ public class GUI {
         gbc.gridy = 4; // Row 4 (below Cashier button)
         insidePanel.add(dataEntryOpButton, gbc); // Add button to inside panel
 
-
+        // Add action listeners for buttons
         superAdminButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -248,8 +265,7 @@ public class GUI {
         if(entity.equals("SuperAdmin")){
             cardLayout.show(cardPanel, "SuperAdminPanel");
             superAdminGUI.SAshowScreen(internalScreenName);
-        }
-        else if(entity.equals("BranchManager")){
+        } else if(entity.equals("BranchManager")){
             cardLayout.show(cardPanel,"BranchManagerPanel");
             branchManagerGUI.BMshowScreen("BMLoginScreen");
         }
@@ -262,7 +278,7 @@ public class GUI {
             dataEntryOpGUI.DEOshowScreen("DEOLoginScreen");
         }
         else{
-            displayMessage("Invalid Entity Type");
+            JOptionPane.showMessageDialog(null,"Invalid Entity Type");
         }
     }
 
