@@ -266,6 +266,39 @@ public class ImplementDB {
 //            return false;
 //        }
 //    }
+    public boolean addVendorData(String name, String email, String companyName) {
+        String onlineQuery = String.format(
+                "INSERT INTO Vendors (name, email, companyName) VALUES ('%s', '%s', '%s')",
+                name, email, companyName
+        );
+        onlineDB.executeQuery(onlineQuery);
+        System.out.println("Vendor added successfully.");
+        return true;
+    }
+
+//    public void addEmployeesData(String name, String email, double salary, String role, int branchCode) {
+//        String insertManagerSQL = "INSERT INTO Employees (name, email, salary, role, branch_id) VALUES (?, ?, ?, ?, ?)";
+//
+//        final int NAME_PARAM = 1;
+//        final int EMAIL_PARAM = 2;
+//        final int SALARY_PARAM = 3;
+//        final int ROLE_PARAM = 4;
+//        final int BRANCH_PARAM = 5;
+//
+//        try {
+//            PreparedStatement pstmt = conn.prepareStatement(insertManagerSQL);
+//
+//            pstmt.setString(NAME_PARAM, name);
+//            pstmt.setString(EMAIL_PARAM, email);
+//            pstmt.setDouble(SALARY_PARAM, salary);
+//            pstmt.setString(ROLE_PARAM, role);
+//            pstmt.setInt(BRANCH_PARAM, branchCode);
+//
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    } // add employees data
 
     public Object[][] getVendorsTableData() {
         ArrayList<Vendor> vendors = new ArrayList<>();
@@ -577,6 +610,74 @@ public class ImplementDB {
     }
 
 
+    public boolean updatePassword(int branchId, String email, String newPassword) {
+        try {
+            String query = "UPDATE Employees SET password = ? WHERE branch_id = ? AND email = ?";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setString(1, newPassword);
+            pst.setInt(2, branchId);
+            pst.setString(3, email);
+
+            int rowsAffected = pst.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Object[][] getSalesData() {
+        String query = "SELECT s.sale_id, e.name as employee_name, s.sale_date, s.total_amount " +
+                "FROM Sales s JOIN Employees e ON s.employee_id = e.employee_id " +
+                "ORDER BY s.sale_date DESC";
+        ArrayList<Object[]> salesList = new ArrayList<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getInt("sale_id"),
+                        rs.getString("employee_name"),
+                        rs.getTimestamp("sale_date"),
+                        rs.getDouble("total_amount"),
+                        "Return"
+                };
+                salesList.add(row);
+            }
+            return salesList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error fetching sales data: " + e.getMessage());
+            return new Object[0][0];
+        }
+    }
+
+    public Object[][] getSaleItems(int saleId) {
+        String query = "SELECT si.product_id, p.name, si.quantity, si.price_at_sale, si.returned_quantity " +
+                "FROM SaleItems si JOIN Products p ON si.product_id = p.product_id " +
+                "WHERE si.sale_id = ?";
+        ArrayList<Object[]> itemsList = new ArrayList<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, saleId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getInt("quantity"),
+                        rs.getDouble("price_at_sale"),
+                        rs.getInt("returned_quantity"),
+                        "Return"
+                };
+                itemsList.add(row);
+            }
+            return itemsList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error fetching sale items: " + e.getMessage());
+            return new Object[0][0];
+        }
+    }
+
 //    public boolean processReturn(int saleId, int productId, int returnQuantity) {
 //        String updateSaleItem = "UPDATE SaleItems SET returned_quantity = returned_quantity + ? " +
 //                "WHERE sale_id = ? AND product_id = ?";
@@ -730,20 +831,5 @@ public class ImplementDB {
         }
     }
 
-    private int getProductId(String name, String category, double price) {
-        String query = "SELECT product_id FROM Products WHERE name = ? AND category = ? AND sale_price = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, category);
-            pstmt.setDouble(3, price);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("product_id");
-            }
-        } catch (SQLException e) {
-            System.out.println("Error getting product id: " + e.getMessage());
-        }
-        return -1;
-    }
 
 }
