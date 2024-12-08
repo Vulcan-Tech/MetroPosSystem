@@ -200,4 +200,14 @@ public Object[][] getVendorsTableData() {
                 return true;
 
     }
+    public boolean deleteProduct(int productId) {
+        String query = "DELETE FROM Products WHERE product_id = ?";
+
+                String onlineQuery = String.format(
+                        "DELETE FROM Products WHERE product_id = %d",
+                        productId
+                );
+                onlineDB.executeQuery(onlineQuery);
+                return true;
+    }
 }
