@@ -222,4 +222,28 @@ public Object[][] getVendorsTableData() {
             return false;
         }
     }
+    public boolean updateSAPassword(String newPass) {
+        System.out.println("1. Starting password update");
+        String query = "UPDATE Employees SET password = ? WHERE role = 'SuperAdmin'";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, newPass);
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("2. Local update complete. Rows affected: " + rowsAffected);
+            System.out.println("3. OnlineDB object exists: " + (onlineDB != null));
+
+            if(rowsAffected > 0 && onlineDB != null) {
+                String onlineQuery = String.format(
+                        "UPDATE Employees SET password = '%s' WHERE role = 'SuperAdmin'",
+                        newPass);
+                System.out.println("4. Sending to online DB: " + onlineQuery);
+                onlineDB.executeQuery(onlineQuery);
+                System.out.println("5. Online update complete");
+            }
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error in updateSAPassword: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
