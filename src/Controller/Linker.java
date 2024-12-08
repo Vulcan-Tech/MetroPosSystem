@@ -131,5 +131,7 @@ public class Linker {
             return false;
         }
     }
-
+    public boolean processReturn(int saleId, int productId, int returnQuantity) {
+        return dbObj.processReturn(saleId, productId, returnQuantity);
+    }
 }
