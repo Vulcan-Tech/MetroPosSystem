@@ -166,4 +166,11 @@ public class Linker {
     public Object[][] getAllProductsfromDB(){
         return dbObj.getAllProducts();
     }
+    public Object[][] getProductsforBillfromDB(){
+        return dbObj.getProductsforBill();
+    }
+
+    public Object[][] searchProductsforBillfromDB(String str){
+        return dbObj.searchProductsforBill(str);
+    }
 }
