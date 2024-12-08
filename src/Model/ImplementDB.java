@@ -210,4 +210,34 @@ public Object[][] getVendorsTableData() {
                 onlineDB.executeQuery(onlineQuery);
                 return true;
     }
+    public Object[][] searchProducts(String searchText) {
+        String query = "SELECT product_id, name, category, original_price, sale_price, stock_quantity " +
+                "FROM Products WHERE name LIKE ? OR category LIKE ?";
+        ArrayList<Object[]> results = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            String searchPattern = "%" + searchText + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("original_price"),
+                        rs.getDouble("sale_price"),
+                        rs.getInt("stock_quantity")
+                };
+                results.add(row);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching products: " + e.getMessage());
+            return new Object[0][0];
+        }
+
+        return results.toArray(new Object[0][]);
+    }
 }
