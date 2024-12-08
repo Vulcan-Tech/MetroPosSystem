@@ -53,8 +53,8 @@ public void setBranchID(int Id){
         this.branchId = Id;
     }
     public void setEmail(String Email){
-        this.Email = Email;
-    }
+        this.Email=Email;
+}
  
 
  public int getbranchID(){
@@ -80,7 +80,7 @@ public void setBranchID(int Id){
             refreshProductTable(model);
         }
         DEOcardLayout.show(DEOPanel, screenName);
-    }
+}
 
 public JPanel DEOgetPanel() {
         return DEOPanel;

@@ -249,18 +249,18 @@ public class GUI {
             cardLayout.show(cardPanel, "SuperAdminPanel");
             superAdminGUI.SAshowScreen(internalScreenName);
         }
-        //else if(entity.equals("BranchManager")){
-//            cardLayout.show(cardPanel,"BranchManagerPanel");
-//            branchManagerGUI.BMshowScreen("BMLoginScreen");
-//        }
-//        else if(entity.equals("Cashier")){
-//            cardLayout.show(cardPanel,"CashierPanel");
-//            cashierGUI.CashiershowScreen("CashierLoginScreen");
-//        }
-//        else if(entity.equals("DEO")){
-//            cardLayout.show(cardPanel,"DEOPanel");
-//            dataEntryOpGUI.DEOshowScreen("DEOLoginScreen");
-//        }
+        else if(entity.equals("BranchManager")){
+            cardLayout.show(cardPanel,"BranchManagerPanel");
+            branchManagerGUI.BMshowScreen("BMLoginScreen");
+        }
+        else if(entity.equals("Cashier")){
+            cardLayout.show(cardPanel,"CashierPanel");
+            cashierGUI.CashiershowScreen("CashierLoginScreen");
+        }
+        else if(entity.equals("DEO")){
+            cardLayout.show(cardPanel,"DEOPanel");
+            dataEntryOpGUI.DEOshowScreen("DEOLoginScreen");
+        }
         else{
             displayMessage("Invalid Entity Type");
         }

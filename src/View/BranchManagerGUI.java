@@ -662,6 +662,8 @@ public class BranchManagerGUI {
 
         BranchManagerPanel.add(mainpanel, "addCashierScreen");
     }
+
+
     public void BMshowScreen(String screenName) {
         BMcardLayout.show(BranchManagerPanel, screenName);
     }
