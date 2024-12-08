@@ -139,4 +139,13 @@ public class ImplementDB {
             return false;
         }
     }
+    public boolean addVendorData(String name, String email, String companyName) {
+        String onlineQuery = String.format(
+                "INSERT INTO Vendors (name, email, companyName) VALUES ('%s', '%s', '%s')",
+                name, email, companyName
+        );
+        onlineDB.executeQuery(onlineQuery);
+        System.out.println("Vendor added successfully.");
+        return true;
+    }
 }
