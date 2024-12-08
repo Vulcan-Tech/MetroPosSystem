@@ -267,5 +267,314 @@ public class ImplementDB {
 //        }
 //    }
 
+    public Object[][] getVendorsTableData() {
+        ArrayList<Vendor> vendors = new ArrayList<>();
+        Object[][] tableData = null;
+        try {
+            String query = "SELECT vendor_id,name, email, companyName FROM Vendors";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                vendors.add(new Vendor(
+                        rs.getInt("vendor_id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("companyName")
+                ));
+            }
+
+            tableData = new Object[vendors.size()][5];
+            for (int i = 0; i < vendors.size(); i++) {
+                Vendor vendor = vendors.get(i);
+                tableData[i][0] = vendor.getVendor_id();
+                tableData[i][1] = vendor.getName();
+                tableData[i][2] = vendor.getEmail();
+                tableData[i][3] = vendor.getCompanyName();
+                tableData[i][4] = ""; // Empty string for button column
+            }
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tableData;
+    }
+
+    public boolean addProductData(String name, String category, double orgprice, double salesprice, int stockqty, int vendor_id) {
+        String insertBranchSQL = "INSERT INTO Products (name,category,original_price,sale_price,stock_quantity,vendor_id) VALUES (?, ?, ?, ?, ?, ?)";
+
+
+        String onlineQuery = String.format(
+                "INSERT INTO Products (name,category,original_price,sale_price,stock_quantity,vendor_id) " +
+                        "VALUES ('%s', '%s', %f, %f, %d, %d)",
+                name, category, orgprice, salesprice, stockqty, vendor_id
+        );
+        onlineDB.executeQuery(onlineQuery);
+        System.out.println("Product added successfully.");
+        return true;
+
+    }
+
+    public boolean deleteProduct(int productId) {
+        String query = "DELETE FROM Products WHERE product_id = ?";
+
+        String onlineQuery = String.format(
+                "DELETE FROM Products WHERE product_id = %d",
+                productId
+        );
+        onlineDB.executeQuery(onlineQuery);
+        return true;
+    }
+
+    public Object[][] searchProducts(String searchText) {
+        String query = "SELECT product_id, name, category, original_price, sale_price, stock_quantity " +
+                "FROM Products WHERE name LIKE ? OR category LIKE ?";
+        ArrayList<Object[]> results = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            String searchPattern = "%" + searchText + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("original_price"),
+                        rs.getDouble("sale_price"),
+                        rs.getInt("stock_quantity")
+                };
+                results.add(row);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching products: " + e.getMessage());
+            return new Object[0][0];
+        }
+
+        return results.toArray(new Object[0][]);
+    }
+
+    public Object[][] getAllProducts() {
+        ArrayList<Product> products = new ArrayList<>();
+        Object[][] tableData = null;
+        try {
+            String query = "SELECT product_id, name, category, original_price, sale_price, stock_quantity, vendor_id FROM Products";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                products.add(new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("original_price"),
+                        rs.getDouble("sale_price"),
+                        rs.getInt("stock_quantity"),
+                        rs.getInt("vendor_id")
+                ));
+            }
+
+            tableData = new Object[products.size()][9];
+            for (int i = 0; i < products.size(); i++) {
+                Product product = products.get(i);
+                tableData[i][0] = product.getProduct_id();
+                tableData[i][1] = product.getName();
+                tableData[i][2] = product.getCategory();
+                tableData[i][3] = product.getOriginalPrice();
+                tableData[i][4] = product.getSalePrice();
+                tableData[i][5] = product.getStockQuantity();
+                tableData[i][6] = product.getVendor_id();
+                tableData[i][7] = ""; // Empty string for Edit button column
+                tableData[i][8] = ""; // Empty string for Delete button column
+            }
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tableData;
+    }
+
+    public Object[][] getProductsforBill() {
+        ArrayList<Object[]> productList = new ArrayList<>();
+        String query = "SELECT name, category, sale_price FROM Products";
+        try (PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Object[] product = new Object[4];
+                product[0] = rs.getString("name");
+                product[1] = rs.getString("category");
+                product[2] = rs.getDouble("sale_price");
+                product[3] = "Add";
+                productList.add(product);
+            }
+            return productList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error fetching products: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Object[][] searchProductsforBill(String searchText) {
+        ArrayList<Object[]> productList = new ArrayList<>();
+        String query = "SELECT name, category, sale_price FROM Products WHERE name LIKE ? OR category LIKE ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            String searchPattern = "%" + searchText + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] product = new Object[4];
+                product[0] = rs.getString("name");
+                product[1] = rs.getString("category");
+                product[2] = rs.getDouble("sale_price");
+                product[3] = "Add";
+                productList.add(product);
+            }
+            return productList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error searching products: " + e.getMessage());
+            return new Object[0][0];
+        }
+    }
+
+    public int getProductStock(String name, String company, double price) {
+        String query = "SELECT stock_quantity FROM Products WHERE name = ? AND category = ? AND sale_price = ?";
+        try (
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, company);
+            pstmt.setDouble(3, price);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("stock_quantity");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting stock: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    public boolean updateStockAfterBill(String name, String company, double price, int quantitySold) {
+        String query = "UPDATE Products SET stock_quantity = stock_quantity - ? WHERE name = ? AND category = ? AND sale_price = ?";
+
+        String onlineQuery = String.format(
+                "UPDATE Products SET stock_quantity = stock_quantity - %d " +
+                        "WHERE name = '%s' AND category = '%s' AND sale_price = %f",
+                quantitySold, name, company, price
+        );
+        onlineDB.executeQuery(onlineQuery);
+        return true;
+
+    }
+
+    public int createSaleRecord(int employeeId, int branchId, double totalAmount) {
+        // First create sale in local DB and get generated ID
+        String localQuery = "INSERT INTO Sales (employee_id, branch_id, total_amount) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(localQuery, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, employeeId);
+            pstmt.setInt(2, branchId);
+            pstmt.setDouble(3, totalAmount);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                ResultSet rs = pstmt.getGeneratedKeys();
+                if (rs.next()) {
+                    int generatedSaleId = rs.getInt(1);
+
+                    // Now create online DB query with the same ID
+                    String onlineQuery = String.format(
+                            "INSERT INTO Sales (sale_id, employee_id, branch_id, total_amount) VALUES (%d, %d, %d, %f)",
+                            generatedSaleId, employeeId, branchId, totalAmount
+                    );
+                    onlineDB.executeSpecialQuery(onlineQuery);
+
+                    return generatedSaleId;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error creating sale record: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    public int getEmployeeId(String email, int branchId) {
+        String query = "SELECT employee_id FROM Employees WHERE email = ? AND branch_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            pstmt.setInt(2, branchId);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("employee_id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching employee ID: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    // idhr tak
+
+    public Object[][] getStockData() {
+        String query = "SELECT name, category, stock_quantity FROM Products ORDER BY name";
+        ArrayList<Object[]> stockList = new ArrayList<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getInt("stock_quantity")
+                };
+                stockList.add(row);
+            }
+
+            return stockList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error fetching stock data: " + e.getMessage());
+        }
+        return new Object[0][0];
+    }
+
+    public Object[][] searchStock(String searchText) {
+        String query = "SELECT name, category, stock_quantity FROM Products WHERE LOWER(name) LIKE ? ORDER BY name";
+        ArrayList<Object[]> stockList = new ArrayList<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, "%" + searchText.toLowerCase() + "%");
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Object[] row = {
+                            rs.getString("name"),
+                            rs.getString("category"),
+                            rs.getInt("stock_quantity")
+                    };
+                    stockList.add(row);
+                }
+            }
+
+            return stockList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error searching stock: " + e.getMessage());
+        }
+        return new Object[0][0];
+    }
+
 
 }
