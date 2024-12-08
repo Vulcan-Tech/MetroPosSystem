@@ -246,4 +246,25 @@ public Object[][] getVendorsTableData() {
             return false;
         }
     }
+    public boolean updatePasswordAndStatus(String email, String newPass) {
+        String query = "UPDATE Employees SET password = ?, passwordChanged = true WHERE email = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, newPass);
+            pstmt.setString(2, email);
+            System.out.println("Changing password in the local db");
+            int rowsAffected = pstmt.executeUpdate();
+
+            if(rowsAffected > 0) {
+                //&& onlineDB != null
+                String onlineQuery = String.format(
+                        "UPDATE Employees SET password = '%s', passwordChanged = true WHERE email = '%s'",
+                        newPass, email);
+                onlineDB.executeQuery(onlineQuery);
+            }
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating password and status: " + e.getMessage());
+            return false;
+        }
+    }
 }
