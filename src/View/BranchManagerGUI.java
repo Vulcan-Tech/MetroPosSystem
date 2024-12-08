@@ -669,4 +669,274 @@ public class BranchManagerGUI {
     public JPanel BMgetPanel() {
         return BranchManagerPanel;
     }
+    public void addDEOScreen(){
+        JPanel mainpanel = new JPanel();
+        mainpanel.setLayout(new GridBagLayout());
+        mainpanel.setBackground(Color.white);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        topPanel.setBackground(color2);
+        topPanel.setLayout(new BorderLayout());
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20,20,10,20));
+        JLabel welcomelabel = new JLabel("ADD DATA ENTRY OPERATOR",SwingConstants.CENTER);
+        welcomelabel.setFont(new Font("Helvetica",Font.BOLD,38));
+        welcomelabel.setForeground(color1);
+        topPanel.add(welcomelabel,BorderLayout.CENTER);
+
+        JButton backButton = new JButton();
+        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        backButton.setIcon(icon);
+        backButton.setPreferredSize(new Dimension(55, 55));
+        backButton.setFocusPainted(false);
+        topPanel.add(backButton,BorderLayout.WEST);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BMshowScreen("BMDashboardScreen");
+            }
+        });
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.4; // Takes 40% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(topPanel,gbc);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel,BoxLayout.Y_AXIS));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
+        bottomPanel.setBackground(color4);
+
+        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\name-50.png");
+        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\email-50.png");
+        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\salary-50.png");
+        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\roles-50.png");
+
+        JLabel iconLabel1 = new JLabel(icon1);
+        JLabel iconLabel2 = new JLabel(icon2);
+        JLabel iconLabel3 = new JLabel(icon3);
+        JLabel iconLabel4 = new JLabel(icon4);
+
+        JTextField Name = new JTextField(30);
+        Name.setBorder(BorderFactory.createTitledBorder("Name"));
+        Name.setBackground(color3);
+        Name.setFont(new Font("Helvetica",Font.PLAIN,18));
+        Name.setPreferredSize(new Dimension(250, 60));
+
+        JTextField Email = new JTextField(30);
+        Email.setBorder(BorderFactory.createTitledBorder("Email"));
+        Email.setBackground(color3);
+        Email.setFont(new Font("Helvetica",Font.PLAIN,18));
+        Email.setPreferredSize(new Dimension(250, 60));
+
+        JTextField Salary = new JTextField(30);
+        Salary.setBorder(BorderFactory.createTitledBorder("Salary"));
+        Salary.setBackground(color3);
+        Salary.setFont(new Font("Helvetica",Font.PLAIN,18));
+        Salary.setPreferredSize(new Dimension(250, 60));
+
+        JTextField Role = new JTextField(30);
+        Role.setBorder(BorderFactory.createTitledBorder("Role"));
+        Role.setBackground(color3);
+        Role.setFont(new Font("Helvetica",Font.PLAIN,18));
+        Role.setPreferredSize(new Dimension(250, 60));
+        Role.setText("Data Entry Operator");
+        Role.setEditable(false);
+
+        // Panel for city field and icon
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel1.add(iconLabel1);
+        panel1.setBackground(color4);
+        panel1.add(Name);
+        panel1.setPreferredSize(new Dimension(icon1.getIconWidth() + Name.getPreferredSize().width, 60));
+        panel1.setMaximumSize(new Dimension(icon1.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel1.setMinimumSize(new Dimension(icon1.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel1.revalidate();
+        panel1.repaint();
+
+        // Panel for address field and icon
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel2.add(iconLabel2);
+        panel2.setBackground(color4);
+        panel2.add(Email);
+        panel2.setPreferredSize(new Dimension(icon2.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel2.setMaximumSize(new Dimension(icon2.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel2.setMinimumSize(new Dimension(icon2.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel2.revalidate();
+        panel2.repaint();
+
+        // Panel for phone number field and icon
+        JPanel panel3 = new JPanel();
+        panel3.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel3.add(iconLabel3);
+        panel3.add(Salary);
+        panel3.setBackground(color4);
+        panel3.setPreferredSize(new Dimension(icon3.getIconWidth() + Salary.getPreferredSize().width, 60));
+        panel3.setMaximumSize(new Dimension(icon3.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel3.setMinimumSize(new Dimension(icon3.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel3.revalidate();
+        panel3.repaint();
+
+        JPanel panel4 = new JPanel();
+        panel4.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel4.add(iconLabel4);
+        panel4.add(Role);
+        panel4.setBackground(color4);
+        panel4.setPreferredSize(new Dimension(icon4.getIconWidth() + Role.getPreferredSize().width, 60));
+        panel4.setMaximumSize(new Dimension(icon4.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel4.setMinimumSize(new Dimension(icon4.getIconWidth() + Email.getPreferredSize().width, 60));
+        panel4.revalidate();
+        panel4.repaint();
+
+        JButton addDEObutton = new JButton("Add DEO");
+        addDEObutton.setPreferredSize(new Dimension(300,60));
+        addDEObutton.setMinimumSize(new Dimension(300,60));
+        addDEObutton.setBackground(color2);
+        addDEObutton.setForeground(color1);
+        addDEObutton.setFont(new Font("Helvetica",Font.BOLD,20));
+        addDEObutton.setMaximumSize(new Dimension(300, 60));
+        bottomPanel.revalidate();
+        bottomPanel.repaint();
+
+        bottomPanel.add(Box.createVerticalStrut(40));
+        bottomPanel.add(panel1);
+        bottomPanel.add(Box.createVerticalStrut(20));
+        bottomPanel.add(panel2);
+        bottomPanel.add(Box.createVerticalStrut(20));
+        bottomPanel.add(panel3);
+        bottomPanel.add(Box.createVerticalStrut(20));
+        bottomPanel.add(panel4);
+        bottomPanel.add(Box.createVerticalStrut(20));
+        bottomPanel.add(addDEObutton);
+
+        panel1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel4.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addDEObutton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addDEObutton.setFocusPainted(false);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.6; // Takes 70% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(bottomPanel, gbc);
+
+        addDEObutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                employee = new Employee();
+                employee.setName(Name.getText());
+                employee.setEmail(Email.getText());
+                employee.setSalary(Double.parseDouble(Salary.getText()));
+                employee.setRole(Role.getText());
+                if(employee.getSalary() < 0){
+                    String str = "Not possible";
+                    JOptionPane.showMessageDialog(null, str);
+                }
+                else {
+                    linkerObj.addEmpData(employee.getName(),employee.getEmail(),employee.getSalary(),employee.getRole(), branchId);
+                    JOptionPane.showMessageDialog(null, "DEO ADDED");
+                }
+            }
+        });
+
+        BranchManagerPanel.add(mainpanel, "addDEOScreen");
+    }
+    public void addViewStaffScreen(){
+        JPanel mainpanel = new JPanel();
+        mainpanel.setLayout(new GridBagLayout());
+        mainpanel.setBackground(Color.white);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        topPanel.setBackground(color2);
+        topPanel.setLayout(new BorderLayout());
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20,20,10,20));
+        JLabel welcomelabel = new JLabel("Branch Staff List",SwingConstants.CENTER);
+        welcomelabel.setFont(new Font("Helvetica",Font.BOLD,38));
+        welcomelabel.setForeground(color1);
+        topPanel.add(welcomelabel,BorderLayout.CENTER);
+
+        JButton backButton = new JButton();
+        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        backButton.setIcon(icon);
+        backButton.setPreferredSize(new Dimension(55, 55));
+        backButton.setFocusPainted(false);
+        topPanel.add(backButton,BorderLayout.WEST);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BMshowScreen("BMDashboardScreen");
+            }
+        });
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.4; // Takes 40% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(topPanel,gbc);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BorderLayout());
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
+        bottomPanel.setBackground(color4);
+
+        System.out.println("Current Branch ID for staff view: " + branchId);
+
+        String[] columnNames = {"EmployeeID", "Name", "Email", "Salary", "Role"};
+        DefaultTableModel Model = new DefaultTableModel(columnNames, 0);
+
+        // Get employee list for current branch
+        List<Employee> empList = linkerObj.employeelist(branchId);
+        System.out.println("Found " + empList.size() + " employees");
+
+        // Add each employee to the table model
+        for(Employee emp : empList) {
+            Object[] rowData = {
+                    emp.getEmployeeId(),
+                    emp.getName(),
+                    emp.getEmail(),
+                    emp.getSalary(),
+                    emp.getRole()
+            };
+            Model.addRow(rowData);
+        }
+
+        // Configure table display properties
+        JTable table = new JTable(Model);
+        table.setFillsViewportHeight(true);
+        table.setRowHeight(30);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        bottomPanel.add(scrollPane, BorderLayout.CENTER);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0; // Takes full width
+        gbc.weighty = 0.6; // Takes 70% of height
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        mainpanel.add(bottomPanel, gbc);
+
+        BranchManagerPanel.add(mainpanel, "ViewStaffScreen");
+    }
 }
