@@ -148,4 +148,41 @@ public class ImplementDB {
         System.out.println("Vendor added successfully.");
         return true;
     }
+
+public Object[][] getVendorsTableData() {
+        ArrayList<Vendor> vendors = new ArrayList<>();
+        Object[][] tableData = null;
+        try {
+            String query = "SELECT vendor_id,name, email, companyName FROM Vendors";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                vendors.add(new Vendor(
+                        rs.getInt("vendor_id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("companyName")
+                ));
+            }
+
+            tableData = new Object[vendors.size()][5];
+            for (int i = 0; i < vendors.size(); i++) {
+                Vendor vendor = vendors.get(i);
+                tableData[i][0] = vendor.getVendor_id();
+                tableData[i][1] = vendor.getName();
+                tableData[i][2] = vendor.getEmail();
+                tableData[i][3] = vendor.getCompanyName();
+                tableData[i][4] = ""; // Empty string for button column
+            }
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tableData;
+    }
 }
