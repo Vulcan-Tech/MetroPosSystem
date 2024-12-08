@@ -2,6 +2,11 @@ package View;
 
 import Controller.Linker;
 import Model.Employee;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.util.List;
 import javax.swing.*;
@@ -26,17 +31,22 @@ public class BranchManagerGUI {
     private String Email;
     private String password;
 
-    public BranchManagerGUI(Linker linkerObj) {
+    public BranchManagerGUI(Linker linkerObj){
         this.linkerObj = linkerObj;
         BMcardLayout = new CardLayout();
         BranchManagerPanel = new JPanel(BMcardLayout);
 
-        color = new Color(44, 116, 229);
-        color1 = new Color(229, 185, 35);
-        color2 = new Color(11, 28, 64);
-        color3 = new Color(136, 193, 229);
-        color4 = new Color(38, 97, 156);
+        color = new Color(44,116,229);
+        color1 = new Color(229,185,35);
+        color2 = new Color(11,28,64);
+        color3 = new Color(136,193,229);
+        color4 = new Color(38,97,156);
 
+        addBMLoginScreen();
+        addBMDashboardScreen();
+        addCashierScreen();
+        addDEOScreen();
+        addViewStockScreen();
 
     }
 
@@ -59,6 +69,7 @@ public class BranchManagerGUI {
     public String getPassword(){
         return password;
     }
+
     public void addBMLoginScreen(){
         JPanel mainpanel = new JPanel();
         mainpanel.setLayout(new GridBagLayout());
@@ -78,7 +89,8 @@ public class BranchManagerGUI {
         topPanel.add(welcomelabel,BorderLayout.CENTER);
 
         JButton backButton = new JButton();
-        ImageIcon iconimg = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        ImageIcon iconimg = new ImageIcon(getClass().getResource("/return-50.png"));
+//        ImageIcon iconimg = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
         backButton.setIcon(iconimg);
         backButton.setPreferredSize(new Dimension(55, 55));
         backButton.setFocusPainted(false);
@@ -104,9 +116,12 @@ public class BranchManagerGUI {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
         bottomPanel.setBackground(color4);
 
-        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\id-50.png");
-        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\email-50.png");
-        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\password-50.png");
+        ImageIcon icon1 = new ImageIcon(getClass().getResource("/id-50.png"));
+        ImageIcon icon2 = new ImageIcon(getClass().getResource("/email-50.png"));
+        ImageIcon icon3 = new ImageIcon(getClass().getResource("/password-50.png"));
+//        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\id-50.png");
+//        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\email-50.png");
+//        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\password-50.png");
 
         JLabel iconLabel1 = new JLabel(icon1);
         JLabel iconLabel2 = new JLabel(icon2);
@@ -124,7 +139,7 @@ public class BranchManagerGUI {
         emailField.setFont(new Font("Helvetica",Font.PLAIN,18));
         emailField.setPreferredSize(new Dimension(250, 60));
 
-        JTextField passwordField = new JTextField(30);
+        JPasswordField passwordField = new JPasswordField(30);
         passwordField.setBorder(BorderFactory.createTitledBorder("Password"));
         passwordField.setBackground(color3);
         passwordField.setFont(new Font("Helvetica",Font.PLAIN,18));
@@ -204,7 +219,7 @@ public class BranchManagerGUI {
             public void actionPerformed(ActionEvent e) {
                 int id = Integer.parseInt(idField.getText());
                 String email = emailField.getText();
-                String passcode = passwordField.getText();
+                String passcode = new String(passwordField.getPassword());
 
                 if(linkerObj.EmpLoginValidator(id,email,passcode)) {
                     setBranchID(id);
@@ -263,22 +278,12 @@ public class BranchManagerGUI {
                     }
                 } else {
                     String str = "Wrong Credentials";
-                    displayMessage(str);
+                    JOptionPane.showMessageDialog(null, str);
                 }
             }
         });
 
-        BranchManagerPanel.add(mainpanel, "BranchAddScreen");
-    }
-    public void displayMessage(String str) {
-        JFrame frame = new JFrame("ERROR !");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-        JLabel message = new JLabel(str, SwingConstants.CENTER);
-        message.setForeground(Color.RED);
-        frame.setSize(350, 200);
-        frame.add(message);
-        frame.setVisible(true);
+        BranchManagerPanel.add(mainpanel, "BMLoginScreen");
     }
 
     public void addBMDashboardScreen(){
@@ -300,7 +305,8 @@ public class BranchManagerGUI {
         topPanel.add(welcomelabel,BorderLayout.CENTER);
 
         JButton backButton = new JButton();
-        ImageIcon iconimg = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        ImageIcon iconimg = new ImageIcon(getClass().getResource("/return-50.png"));
+//        ImageIcon iconimg = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
         backButton.setIcon(iconimg);
         backButton.setPreferredSize(new Dimension(55, 55));
         backButton.setFocusPainted(false);
@@ -309,12 +315,15 @@ public class BranchManagerGUI {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Show confirmation dialog
+
                 linkerObj.showEmployeeOptionsMenu();
             }
         });
 
         JButton changePasswordButton = new JButton();
-        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\settings-50.png");
+        ImageIcon icon = new ImageIcon(getClass().getResource("/settings-50.png"));
+//        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\settings-50.png");
         changePasswordButton.setIcon(icon);
         changePasswordButton.setPreferredSize(new Dimension(55, 55));
         changePasswordButton.setFocusPainted(false);
@@ -390,7 +399,8 @@ public class BranchManagerGUI {
         addCashierbutton.setFocusPainted(false);
         addCashierbutton.setPreferredSize(new Dimension(250,250));
 
-        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\cashier-64.png");
+        ImageIcon icon1 = new ImageIcon(getClass().getResource("/cashier-64.png"));
+//        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\cashier-64.png");
         addCashierbutton.setIcon(icon1);
         addCashierbutton.setHorizontalTextPosition(SwingConstants.CENTER);  // Center text horizontally
         addCashierbutton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -403,7 +413,8 @@ public class BranchManagerGUI {
         addDEObutton.setPreferredSize(new Dimension(250,250));
         addDEObutton.setFocusPainted(false);
 
-        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\data-entry-50.png");
+        ImageIcon icon2 = new ImageIcon(getClass().getResource("/data-entry-50.png"));
+//        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\data-entry-50.png");
         addDEObutton.setIcon(icon2);
         addDEObutton.setHorizontalTextPosition(SwingConstants.CENTER);  // Center text horizontally
         addDEObutton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -416,7 +427,8 @@ public class BranchManagerGUI {
         viewStaffbutton.setFocusPainted(false);
         viewStaffbutton.setPreferredSize(new Dimension(250,250));
 
-        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\staff-50.png");
+        ImageIcon icon3 = new ImageIcon(getClass().getResource("/staff-50.png"));
+//        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\staff-50.png");
         viewStaffbutton.setIcon(icon3);
         viewStaffbutton.setHorizontalTextPosition(SwingConstants.CENTER);
         viewStaffbutton.setVerticalTextPosition(SwingConstants.BOTTOM);// Center text horizontally
@@ -429,7 +441,8 @@ public class BranchManagerGUI {
         viewReportsbutton.setFocusPainted(false);
         viewReportsbutton.setPreferredSize(new Dimension(250,250));
 
-        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\reports-50.png");
+        ImageIcon icon4 = new ImageIcon(getClass().getResource("/reports-50.png"));
+//        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\reports-50.png");
         viewReportsbutton.setIcon(icon4);
         viewReportsbutton.setHorizontalTextPosition(SwingConstants.CENTER);
         viewReportsbutton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -464,6 +477,7 @@ public class BranchManagerGUI {
         viewStaffbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                addViewStaffScreen();
                 BMshowScreen("ViewStaffScreen");
             }
         });
@@ -471,12 +485,14 @@ public class BranchManagerGUI {
         viewReportsbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                addViewReportsScreen();
                 BMshowScreen("ViewReportsScreen");
             }
         });
 
         BranchManagerPanel.add(mainpanel, "BMDashboardScreen");
     }
+
     public void addCashierScreen(){
         JPanel mainpanel = new JPanel();
         mainpanel.setLayout(new GridBagLayout());
@@ -496,7 +512,8 @@ public class BranchManagerGUI {
         topPanel.add(welcomelabel,BorderLayout.CENTER);
 
         JButton backButton = new JButton();
-        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        ImageIcon icon = new ImageIcon(getClass().getResource("/return-50.png"));
+//        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
         backButton.setIcon(icon);
         backButton.setPreferredSize(new Dimension(55, 55));
         backButton.setFocusPainted(false);
@@ -522,10 +539,14 @@ public class BranchManagerGUI {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
         bottomPanel.setBackground(color4);
 
-        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\name-50.png");
-        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\email-50.png");
-        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\salary-50.png");
-        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\roles-50.png");
+        ImageIcon icon1 = new ImageIcon(getClass().getResource("/name-50.png"));
+        ImageIcon icon2 = new ImageIcon(getClass().getResource("/email-50.png"));
+        ImageIcon icon3 = new ImageIcon(getClass().getResource("/salary-50.png"));
+        ImageIcon icon4 = new ImageIcon(getClass().getResource("/roles-50.png"));
+//        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\name-50.png");
+//        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\email-50.png");
+//        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\salary-50.png");
+//        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\roles-50.png");
 
         JLabel iconLabel1 = new JLabel(icon1);
         JLabel iconLabel2 = new JLabel(icon2);
@@ -650,12 +671,14 @@ public class BranchManagerGUI {
                 employee.setSalary(Double.parseDouble(Salary.getText()));
                 employee.setRole(Role.getText());
                 if(employee.getSalary() < 0){
-                    String str = "Not possible";
-                    displayMessage(str);
+                    String str = "Salary less than 0 not possible";
+                    JOptionPane.showMessageDialog(null, str);
+                } else if (linkerObj.checkEmailExists(employee.getEmail())){
+                    JOptionPane.showMessageDialog(null,"Email Already Exists");
                 }
                 else {
-                   linkerObj.addEmpData(employee.getName(),employee.getEmail(),employee.getSalary(),employee.getRole(), branchId);
-                   displayMessage("Cashier Added");
+                    linkerObj.addEmpData(employee.getName(),employee.getEmail(),employee.getSalary(),employee.getRole(), branchId);
+                    JOptionPane.showMessageDialog(null, "Cashier Added");
                 }
             }
         });
@@ -663,14 +686,6 @@ public class BranchManagerGUI {
         BranchManagerPanel.add(mainpanel, "addCashierScreen");
     }
 
-
-    public void BMshowScreen(String screenName) {
-        BMcardLayout.show(BranchManagerPanel, screenName);
-    }
-
-    public JPanel BMgetPanel() {
-        return BranchManagerPanel;
-    }
     public void addDEOScreen(){
         JPanel mainpanel = new JPanel();
         mainpanel.setLayout(new GridBagLayout());
@@ -690,7 +705,8 @@ public class BranchManagerGUI {
         topPanel.add(welcomelabel,BorderLayout.CENTER);
 
         JButton backButton = new JButton();
-        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        ImageIcon icon = new ImageIcon(getClass().getResource("/return-50.png"));
+//        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
         backButton.setIcon(icon);
         backButton.setPreferredSize(new Dimension(55, 55));
         backButton.setFocusPainted(false);
@@ -716,10 +732,14 @@ public class BranchManagerGUI {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10,20,20,20));
         bottomPanel.setBackground(color4);
 
-        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\name-50.png");
-        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\email-50.png");
-        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\salary-50.png");
-        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\roles-50.png");
+        ImageIcon icon1 = new ImageIcon(getClass().getResource("/name-50.png"));
+        ImageIcon icon2 = new ImageIcon(getClass().getResource("/email-50.png"));
+        ImageIcon icon3 = new ImageIcon(getClass().getResource("/salary-50.png"));
+        ImageIcon icon4 = new ImageIcon(getClass().getResource("/roles-50.png"));
+//        ImageIcon icon1 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\name-50.png");
+//        ImageIcon icon2 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\email-50.png");
+//        ImageIcon icon3 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\salary-50.png");
+//        ImageIcon icon4 = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\roles-50.png");
 
         JLabel iconLabel1 = new JLabel(icon1);
         JLabel iconLabel2 = new JLabel(icon2);
@@ -846,6 +866,8 @@ public class BranchManagerGUI {
                 if(employee.getSalary() < 0){
                     String str = "Not possible";
                     JOptionPane.showMessageDialog(null, str);
+                } else if (linkerObj.checkEmailExists(employee.getEmail())) {
+                    JOptionPane.showMessageDialog(null, "Email Already Exists");
                 }
                 else {
                     linkerObj.addEmpData(employee.getName(),employee.getEmail(),employee.getSalary(),employee.getRole(), branchId);
@@ -856,6 +878,7 @@ public class BranchManagerGUI {
 
         BranchManagerPanel.add(mainpanel, "addDEOScreen");
     }
+
     public void addViewStaffScreen(){
         JPanel mainpanel = new JPanel();
         mainpanel.setLayout(new GridBagLayout());
@@ -875,7 +898,8 @@ public class BranchManagerGUI {
         topPanel.add(welcomelabel,BorderLayout.CENTER);
 
         JButton backButton = new JButton();
-        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
+        ImageIcon icon = new ImageIcon(getClass().getResource("/return-50.png"));
+//        ImageIcon icon = new ImageIcon("D:\\Java Practice\\POS System Metro\\src\\return-50.png");
         backButton.setIcon(icon);
         backButton.setPreferredSize(new Dimension(55, 55));
         backButton.setFocusPainted(false);
@@ -941,4 +965,157 @@ public class BranchManagerGUI {
 
         BranchManagerPanel.add(mainpanel, "ViewStaffScreen");
     }
+
+    public void addViewStockScreen(){
+
+    }
+
+    public void addViewReportsScreen(){
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(Color.WHITE);
+
+        // Top Panel
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(color2);
+        topPanel.setBorder(BorderFactory.createEmptyBorder(20,20,10,20));
+
+        JLabel titleLabel = new JLabel("Sales Reports", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Helvetica", Font.BOLD, 38));
+        titleLabel.setForeground(color1);
+
+        JButton backButton = new JButton();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/return-50.png"));
+        backButton.setIcon(icon);
+        backButton.setPreferredSize(new Dimension(55, 55));
+        backButton.addActionListener(e -> BMshowScreen("BMDashboardScreen"));
+
+        topPanel.add(titleLabel, BorderLayout.CENTER);
+        topPanel.add(backButton, BorderLayout.WEST);
+
+        // Center Panel
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBackground(color4);
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+        // Branch ID Field with consistent size
+        JTextField branchIdField = new JTextField();
+        branchIdField.setBorder(BorderFactory.createTitledBorder("Branch ID"));
+        branchIdField.setPreferredSize(new Dimension(250, 70));
+        branchIdField.setMaximumSize(new Dimension(250, 70));
+        branchIdField.setFont(new Font("Helvetica", Font.PLAIN, 18));
+        String id = String.valueOf(branchId);
+        branchIdField.setText(id);
+        branchIdField.setEditable(false);
+
+        // Report Type Combo with consistent size
+        String[] reportTypes = {"Daily", "Weekly", "Monthly"};
+        JComboBox<String> reportTypeCombo = new JComboBox<>(reportTypes);
+        reportTypeCombo.setPreferredSize(new Dimension(250, 70));
+        reportTypeCombo.setMaximumSize(new Dimension(250, 70));
+        reportTypeCombo.setFont(new Font("Helvetica", Font.PLAIN, 18));
+
+        // Generate Button with consistent size
+        JButton generateButton = new JButton("Generate Report");
+        generateButton.setPreferredSize(new Dimension(250, 70));
+        generateButton.setMaximumSize(new Dimension(250, 70));
+        generateButton.setBackground(color2);
+        generateButton.setForeground(color1);
+        generateButton.setFont(new Font("Helvetica", Font.BOLD, 20));
+        generateButton.setFocusPainted(false);
+
+        generateButton.addActionListener(e -> {
+            try {
+                int branchId = Integer.parseInt(branchIdField.getText());
+                String reportType = (String) reportTypeCombo.getSelectedItem();
+
+                double[] data;
+                String[] labels;
+                String title;
+
+                DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+                switch (reportType) {
+                    case "Daily":
+                        data = linkerObj.getDailySales(branchId);
+                        for (int i = 0; i < data.length; i++) {
+                            dataset.addValue(data[i], "Sales", "Day " + (i+1));
+                        }
+                        title = "Daily Sales Report";
+                        break;
+
+                    case "Weekly":
+                        data = linkerObj.getWeeklySales(branchId);
+                        String[] weekDays = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+                        for (int i = 0; i < data.length; i++) {
+                            dataset.addValue(data[i], "Sales", weekDays[i]);
+                        }
+                        title = "Weekly Sales Report";
+                        break;
+
+                    case "Monthly":
+                        data = linkerObj.getMonthlySales(branchId);
+                        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+                        for (int i = 0; i < data.length; i++) {
+                            dataset.addValue(data[i], "Sales", months[i]);
+                        }
+                        title = "Monthly Sales Report";
+                        break;
+
+                    default:
+                        return;
+                }
+
+                JFreeChart chart = ChartFactory.createBarChart(
+                        title,
+                        "Time Period",
+                        "Sales Amount",
+                        dataset,
+                        PlotOrientation.VERTICAL,
+                        true,
+                        true,
+                        false
+                );
+
+                ChartPanel chartPanel = new ChartPanel(chart);
+                chartPanel.setPreferredSize(new Dimension(800, 600));
+
+                JFrame frame = new JFrame(title);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.add(chartPanel);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Please enter a valid Branch ID");
+            }
+        });
+
+        centerPanel.add(Box.createVerticalStrut(50));
+        branchIdField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        reportTypeCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        centerPanel.add(branchIdField);
+        centerPanel.add(Box.createVerticalStrut(30));
+        centerPanel.add(reportTypeCombo);
+        centerPanel.add(Box.createVerticalStrut(30));
+        centerPanel.add(generateButton);
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        BranchManagerPanel.add(mainPanel, "ViewReportsScreen");
+    }
+
+    public void BMshowScreen(String screenName) {
+        BMcardLayout.show(BranchManagerPanel, screenName);
+    }
+
+    public JPanel BMgetPanel() {
+        return BranchManagerPanel;
+    }
+
 }
