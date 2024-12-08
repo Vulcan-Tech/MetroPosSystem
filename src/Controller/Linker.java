@@ -158,4 +158,12 @@ public class Linker {
     public int createSaleRecord(int employeeId, int branchId, double totalAmount) {
         return dbObj.createSaleRecord(employeeId, branchId, totalAmount);
     }
+
+    public Object[][] searchProductsfromDB(String str){
+        return dbObj.searchProducts(str);
+    }
+
+    public Object[][] getAllProductsfromDB(){
+        return dbObj.getAllProducts();
+    }
 }
