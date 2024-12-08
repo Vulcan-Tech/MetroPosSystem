@@ -577,4 +577,173 @@ public class ImplementDB {
     }
 
 
+//    public boolean processReturn(int saleId, int productId, int returnQuantity) {
+//        String updateSaleItem = "UPDATE SaleItems SET returned_quantity = returned_quantity + ? " +
+//                "WHERE sale_id = ? AND product_id = ?";
+//        String updateProduct = "UPDATE Products SET stock_quantity = stock_quantity + ? " +
+//                "WHERE product_id = ?";
+//        String updateSaleTotal = "UPDATE Sales SET total_amount = total_amount - ? " +
+//                "WHERE sale_id = ?";
+//
+//        try {
+//            conn.setAutoCommit(false);
+//
+//            // Get the price of returned items
+//            double returnAmount = getPriceForReturn(saleId, productId) * returnQuantity;
+//
+//            try (PreparedStatement pstmt1 = conn.prepareStatement(updateSaleItem);
+//                 PreparedStatement pstmt2 = conn.prepareStatement(updateProduct);
+//                 PreparedStatement pstmt3 = conn.prepareStatement(updateSaleTotal)) {
+//
+//                pstmt1.setInt(1, returnQuantity);
+//                pstmt1.setInt(2, saleId);
+//                pstmt1.setInt(3, productId);
+//                pstmt1.executeUpdate();
+//
+//                pstmt2.setInt(1, returnQuantity);
+//                pstmt2.setInt(2, productId);
+//                pstmt2.executeUpdate();
+//
+//                pstmt3.setDouble(1, returnAmount);
+//                pstmt3.setInt(2, saleId);
+//                pstmt3.executeUpdate();
+//
+//                conn.commit();
+//                return true;
+//            }
+//        } catch (SQLException e) {
+//            try {
+//                conn.rollback();
+//            } catch (SQLException ex) {
+//                ex.printStackTrace();
+//            }
+//            System.out.println("Error processing return: " + e.getMessage());
+//            return false;
+//        } finally {
+//            try {
+//                conn.setAutoCommit(true);
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
+
+    public boolean processReturn(int saleId, int productId, int returnQuantity) {
+        String updateSaleItem = "UPDATE SaleItems SET returned_quantity = returned_quantity + ? WHERE sale_id = ? AND product_id = ?";
+        String updateProduct = "UPDATE Products SET stock_quantity = stock_quantity + ? WHERE product_id = ?";
+        String updateSaleTotal = "UPDATE Sales SET total_amount = total_amount - ? WHERE sale_id = ?";
+
+        try {
+            conn.setAutoCommit(false);
+            double returnAmount = getPriceForReturn(saleId, productId) * returnQuantity;
+
+            try (PreparedStatement pstmt1 = conn.prepareStatement(updateSaleItem);
+                 PreparedStatement pstmt2 = conn.prepareStatement(updateProduct);
+                 PreparedStatement pstmt3 = conn.prepareStatement(updateSaleTotal)) {
+
+                // Local DB updates
+                pstmt1.setInt(1, returnQuantity);
+                pstmt1.setInt(2, saleId);
+                pstmt1.setInt(3, productId);
+                pstmt1.executeUpdate();
+
+                pstmt2.setInt(1, returnQuantity);
+                pstmt2.setInt(2, productId);
+                pstmt2.executeUpdate();
+
+                pstmt3.setDouble(1, returnAmount);
+                pstmt3.setInt(2, saleId);
+                pstmt3.executeUpdate();
+
+                // Online DB updates using formatted queries
+                String onlineQuery1 = String.format(
+                        "UPDATE SaleItems SET returned_quantity = returned_quantity + %d WHERE sale_id = %d AND product_id = %d",
+                        returnQuantity, saleId, productId
+                );
+                String onlineQuery2 = String.format(
+                        "UPDATE Products SET stock_quantity = stock_quantity + %d WHERE product_id = %d",
+                        returnQuantity, productId
+                );
+                String onlineQuery3 = String.format(
+                        "UPDATE Sales SET total_amount = total_amount - %f WHERE sale_id = %d",
+                        returnAmount, saleId
+                );
+
+                onlineDB.executeSpecialQuery(onlineQuery1);
+                onlineDB.executeSpecialQuery(onlineQuery2);
+                onlineDB.executeSpecialQuery(onlineQuery3);
+
+                conn.commit();
+                return true;
+            }
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("Error processing return: " + e.getMessage());
+            return false;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public double getPriceForReturn(int saleId, int productId) {
+        String query = "SELECT price_at_sale FROM SaleItems WHERE sale_id = ? AND product_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, saleId);
+            pstmt.setInt(2, productId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("price_at_sale");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting price for return: " + e.getMessage());
+        }
+        return 0.0;
+    }
+
+    public boolean saveBill(ArrayList<Object[]> billItems) {
+        try {
+            for (Object[] item : billItems) {
+                int saleId = (int) item[0];
+                int productId = getProductId((String)item[1], (String)item[2], (double)item[3]);
+                int quantity = (int)item[4];
+                double price = (double)item[3];
+
+                String onlineQuery = String.format(
+                        "INSERT INTO SaleItems (sale_id, product_id, quantity, price_at_sale) VALUES (%d, %d, %d, %f)",
+                        saleId, productId, quantity, price
+                );
+                onlineDB.executeQuery(onlineQuery);
+            }
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error saving bill items: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private int getProductId(String name, String category, double price) {
+        String query = "SELECT product_id FROM Products WHERE name = ? AND category = ? AND sale_price = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, category);
+            pstmt.setDouble(3, price);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("product_id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting product id: " + e.getMessage());
+        }
+        return -1;
+    }
+
 }
