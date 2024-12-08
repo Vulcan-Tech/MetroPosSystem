@@ -1,6 +1,7 @@
 package Model;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ImplementDB {
     protected String url = "jdbc:mysql://localhost:3306/MetroPosDB";
@@ -209,5 +210,16 @@ public Object[][] getVendorsTableData() {
                 );
                 onlineDB.executeQuery(onlineQuery);
                 return true;
+    }
+    public boolean validateSACurrentPassword(String currentPass) {
+        String query = "SELECT * FROM Employees WHERE role = 'SuperAdmin' AND password = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, currentPass);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println("Error validating password: " + e.getMessage());
+            return false;
+        }
     }
 }
