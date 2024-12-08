@@ -831,6 +831,22 @@ public class ImplementDB {
         }
     }
 
+    private int getProductId(String name, String category, double price) {
+        String query = "SELECT product_id FROM Products WHERE name = ? AND category = ? AND sale_price = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, category);
+            pstmt.setDouble(3, price);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("product_id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting product id: " + e.getMessage());
+        }
+        return -1;
+    }
+
     public double[] getDailySales(int branchId) {
         double[] dailySales = new double[31];
         String query = "SELECT DAY(sale_date) as day, SUM(total_amount) as total " +
@@ -932,6 +948,6 @@ public class ImplementDB {
             return false;
         }
     }
-
+    
 
 }
