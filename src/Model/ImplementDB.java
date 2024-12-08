@@ -2,6 +2,7 @@ package Model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImplementDB {
     protected String url = "jdbc:mysql://localhost:3306/MetroPosDB";
@@ -87,28 +88,12 @@ public class ImplementDB {
     public void addEmployeesData(String name, String email, double salary, String role, int branchCode) {
         String insertManagerSQL = "INSERT INTO Employees (name, email, salary, role, branch_id) VALUES (?, ?, ?, ?, ?)";
 
-        try {
-            // Local DB insert
-            PreparedStatement pstmt = conn.prepareStatement(insertManagerSQL);
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
-            pstmt.setDouble(3, salary);
-            pstmt.setString(4, role);
-            pstmt.setInt(5, branchCode);
+        String employeeQuery = String.format(
+                "INSERT INTO Employees (name, email, salary, role, branch_id) VALUES ('%s', '%s', %f, '%s', %d)",
+                name, email, salary, role, branchCode
+        );
+        onlineDB.executeQuery(employeeQuery);
 
-            int result = pstmt.executeUpdate();
-
-            if(result > 0) {
-                // Online DB insert - only employee data
-                String employeeQuery = String.format(
-                        "INSERT INTO Employees (name, email, salary, role, branch_id) VALUES ('%s', '%s', %f, '%s', %d)",
-                        name, email, salary, role, branchCode
-                );
-                onlineDB.executeQuery(employeeQuery);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean isPasswordChanged(String email) {
@@ -125,124 +110,54 @@ public class ImplementDB {
             return false;
         }
     }
-    public boolean validateCurrentPassword(int branchId, String email, String currentPassword) {
-        try {
-            String query = "SELECT * FROM Employees WHERE branch_id = ? AND email = ? AND password = ?";
-            PreparedStatement pst = conn.prepareStatement(query);
-            pst.setInt(1, branchId);
-            pst.setString(2, email);
-            pst.setString(3, currentPassword);
 
-            ResultSet rs = pst.executeQuery();
-            return rs.next();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    public boolean addVendorData(String name, String email, String companyName) {
-        String onlineQuery = String.format(
-                "INSERT INTO Vendors (name, email, companyName) VALUES ('%s', '%s', '%s')",
-                name, email, companyName
-        );
-        onlineDB.executeQuery(onlineQuery);
-        System.out.println("Vendor added successfully.");
-        return true;
-    }
+    public List<Employee> fetchEmpList(int branchId){
+        List<Employee> employeeList = new ArrayList<>();
+        String query = "SELECT employee_id,name,email,salary,role FROM Employees WHERE branch_id = ?";
 
-
-public Object[][] getVendorsTableData() {
-        ArrayList<Vendor> vendors = new ArrayList<>();
-        Object[][] tableData = null;
-        try {
-            String query = "SELECT vendor_id,name, email, companyName FROM Vendors";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                vendors.add(new Vendor(
-                        rs.getInt("vendor_id"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("companyName")
-                ));
-            }
-
-            tableData = new Object[vendors.size()][5];
-            for (int i = 0; i < vendors.size(); i++) {
-                Vendor vendor = vendors.get(i);
-                tableData[i][0] = vendor.getVendor_id();
-                tableData[i][1] = vendor.getName();
-                tableData[i][2] = vendor.getEmail();
-                tableData[i][3] = vendor.getCompanyName();
-                tableData[i][4] = ""; // Empty string for button column
-            }
-
-            rs.close();
-            stmt.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return tableData;
-    }
-
-    public boolean addProductData(String name, String category, double orgprice, double salesprice, int stockqty, int vendor_id) {
-        String insertBranchSQL = "INSERT INTO Products (name,category,original_price,sale_price,stock_quantity,vendor_id) VALUES (?, ?, ?, ?, ?, ?)";
-
-
-                String onlineQuery = String.format(
-                        "INSERT INTO Products (name,category,original_price,sale_price,stock_quantity,vendor_id) " +
-                                "VALUES ('%s', '%s', %f, %f, %d, %d)",
-                        name, category, orgprice, salesprice, stockqty, vendor_id
-                );
-                onlineDB.executeQuery(onlineQuery);
-                System.out.println("Product added successfully.");
-                return true;
-
-    }
-    public boolean deleteProduct(int productId) {
-        String query = "DELETE FROM Products WHERE product_id = ?";
-
-                String onlineQuery = String.format(
-                        "DELETE FROM Products WHERE product_id = %d",
-                        productId
-                );
-                onlineDB.executeQuery(onlineQuery);
-                return true;
-    }
-
-    public Object[][] searchProducts(String searchText) {
-        String query = "SELECT product_id, name, category, original_price, sale_price, stock_quantity " +
-                "FROM Products WHERE name LIKE ? OR category LIKE ?";
-        ArrayList<Object[]> results = new ArrayList<>();
-
-        try (Connection conn = DriverManager.getConnection(url, username, password);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            String searchPattern = "%" + searchText + "%";
-            pstmt.setString(1, searchPattern);
-            pstmt.setString(2, searchPattern);
-
+        try{
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1,branchId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                Object[] row = {
-                        rs.getInt("product_id"),
-                        rs.getString("name"),
-                        rs.getString("category"),
-                        rs.getDouble("original_price"),
-                        rs.getDouble("sale_price"),
-                        rs.getInt("stock_quantity")
-                };
-                results.add(row);
+                int empId = rs.getInt("employee_id");
+                String empName = rs.getString("name");
+                String empEmail = rs.getString("email");
+                double empSalary = rs.getDouble("salary");
+                String empRole = rs.getString("role");
+
+                Employee employee = new Employee(empId, empName, empEmail, empSalary, empRole);
+                employeeList.add(employee);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return employeeList;
+    }
+
+    public int fetchBranchId() {
+        int branchCode = -1; // Default value indicating no branchCode retrieved yet
+
+        // SQL query to fetch the last inserted branch_id from the Branches table
+        String selectBranchIdSQL = "SELECT branch_id FROM Branches ORDER BY branch_id DESC LIMIT 1";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(selectBranchIdSQL)) {
+            // Execute the query to fetch the most recent branch_id
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    branchCode = rs.getInt("branch_id"); // Get the last inserted branch_id
+                    System.out.println("Fetched Branch Code: " + branchCode);  // Debug output
+                } else {
+                    System.out.println("No branch_id found.");
+                }
             }
         } catch (SQLException e) {
-            System.out.println("Error searching products: " + e.getMessage());
-            return new Object[0][0];
+            e.printStackTrace();
         }
 
-        return results.toArray(new Object[0][]);
-    }
+        return branchCode; // Return the fetched branch_id
+    } // to be used in Super Admin
 
     public boolean validateSACurrentPassword(String currentPass) {
         String query = "SELECT * FROM Employees WHERE role = 'SuperAdmin' AND password = ?";
@@ -255,6 +170,7 @@ public Object[][] getVendorsTableData() {
             return false;
         }
     }
+
     public boolean updateSAPassword(String newPass) {
         System.out.println("1. Starting password update");
         String query = "UPDATE Employees SET password = ? WHERE role = 'SuperAdmin'";
@@ -279,6 +195,7 @@ public Object[][] getVendorsTableData() {
             return false;
         }
     }
+
     public boolean updatePasswordAndStatus(String email, String newPass) {
         String query = "UPDATE Employees SET password = ?, passwordChanged = true WHERE email = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -299,124 +216,56 @@ public Object[][] getVendorsTableData() {
             System.out.println("Error updating password and status: " + e.getMessage());
             return false;
         }
-
     }
-    public Object[][] getAllProducts() {
-        ArrayList<Product> products = new ArrayList<>();
-        Object[][] tableData = null;
+
+    // iss se neechay zain ko bhejne
+
+
+    public boolean validateCurrentPassword(int branchId, String email, String currentPassword) {
         try {
-            String query = "SELECT product_id, name, category, original_price, sale_price, stock_quantity, vendor_id FROM Products";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
+            String query = "SELECT * FROM Employees WHERE branch_id = ? AND email = ? AND password = ?";
+            PreparedStatement pst = conn.prepareStatement(query);
+            pst.setInt(1, branchId);
+            pst.setString(2, email);
+            pst.setString(3, currentPassword);
 
-            while (rs.next()) {
-                products.add(new Product(
-                        rs.getInt("product_id"),
-                        rs.getString("name"),
-                        rs.getString("category"),
-                        rs.getDouble("original_price"),
-                        rs.getDouble("sale_price"),
-                        rs.getInt("stock_quantity"),
-                        rs.getInt("vendor_id")
-                ));
-            }
-
-            tableData = new Object[products.size()][9];
-            for (int i = 0; i < products.size(); i++) {
-                Product product = products.get(i);
-                tableData[i][0] = product.getProduct_id();
-                tableData[i][1] = product.getName();
-                tableData[i][2] = product.getCategory();
-                tableData[i][3] = product.getOriginalPrice();
-                tableData[i][4] = product.getSalePrice();
-                tableData[i][5] = product.getStockQuantity();
-                tableData[i][6] = product.getVendor_id();
-                tableData[i][7] = ""; // Empty string for Edit button column
-                tableData[i][8] = ""; // Empty string for Delete button column
-            }
-
-            rs.close();
-            stmt.close();
-
+            ResultSet rs = pst.executeQuery();
+            return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-
-        return tableData;
-    }
-
-    public Object[][] getProductsforBill() {
-        ArrayList<Object[]> productList = new ArrayList<>();
-        String query = "SELECT name, category, sale_price FROM Products";
-        try (PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                Object[] product = new Object[4];
-                product[0] = rs.getString("name");
-                product[1] = rs.getString("category");
-                product[2] = rs.getDouble("sale_price");
-                product[3] = "Add";
-                productList.add(product);
-            }
-            return productList.toArray(new Object[0][]);
-        } catch (SQLException e) {
-            System.out.println("Error fetching products: " + e.getMessage());
-            return null;
+            return false;
         }
     }
 
-    public Object[][] searchProductsforBill(String searchText) {
-        ArrayList<Object[]> productList = new ArrayList<>();
-        String query = "SELECT name, category, sale_price FROM Products WHERE name LIKE ? OR category LIKE ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            String searchPattern = "%" + searchText + "%";
-            pstmt.setString(1, searchPattern);
-            pstmt.setString(2, searchPattern);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Object[] product = new Object[4];
-                product[0] = rs.getString("name");
-                product[1] = rs.getString("category");
-                product[2] = rs.getDouble("sale_price");
-                product[3] = "Add";
-                productList.add(product);
-            }
-            return productList.toArray(new Object[0][]);
-        } catch (SQLException e) {
-            System.out.println("Error searching products: " + e.getMessage());
-            return new Object[0][0];
-        }
-    }
+    //    public boolean addCashierData(String name,String email,double salary){
+//        String insertBranchSQL = "INSERT INTO Employees (name, email, salary) VALUES (?, ?, ?)";
+//
+//        try {
+//            // Assuming dbObject handles your database connection
+//            PreparedStatement pstmt = conn.prepareStatement(insertBranchSQL);
+//
+//            // Set the values for city, address, and phone number
+//            pstmt.setString(1, name);
+//            pstmt.setString(2, email);
+//            pstmt.setDouble(3, salary);
+//
+//            // Execute the update to insert the branch
+//            int affectedRows = pstmt.executeUpdate();
+//
+//            // Check if the insert was successful
+//            if (affectedRows > 0) {
+//                System.out.println("Cashier added successfully.");
+//                return true;
+//            } else {
+//                System.out.println("Insert failed.");
+//                return false;
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
-public int getProductStock(String name, String company, double price) {
-        String query = "SELECT stock_quantity FROM Products WHERE name = ? AND category = ? AND sale_price = ?";
-        try (
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            pstmt.setString(1, name);
-            pstmt.setString(2, company);
-            pstmt.setDouble(3, price);
-
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("stock_quantity");
-            }
-        } catch (SQLException e) {
-            System.out.println("Error getting stock: " + e.getMessage());
-        }
-        return -1;
-    }
-
-    public boolean updateStockAfterBill(String name, String company, double price, int quantitySold) {
-        String query = "UPDATE Products SET stock_quantity = stock_quantity - ? WHERE name = ? AND category = ? AND sale_price = ?";
-
-                String onlineQuery = String.format(
-                        "UPDATE Products SET stock_quantity = stock_quantity - %d " +
-                                "WHERE name = '%s' AND category = '%s' AND sale_price = %f",
-                        quantitySold, name, company, price
-                );
-                onlineDB.executeQuery(onlineQuery);
-                return true;
-
-    }
 }
