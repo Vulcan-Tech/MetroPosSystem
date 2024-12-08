@@ -155,4 +155,7 @@ public class Linker {
     public double[] getMonthlySales(int branchId) {
         return dbObj.getMonthlySales(branchId);
     }
+    public int createSaleRecord(int employeeId, int branchId, double totalAmount) {
+        return dbObj.createSaleRecord(employeeId, branchId, totalAmount);
+    }
 }
