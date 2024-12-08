@@ -300,5 +300,47 @@ public Object[][] getVendorsTableData() {
         }
 
     }
-    
+    public Object[][] getAllProducts() {
+        ArrayList<Product> products = new ArrayList<>();
+        Object[][] tableData = null;
+        try {
+            String query = "SELECT product_id, name, category, original_price, sale_price, stock_quantity, vendor_id FROM Products";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                products.add(new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("original_price"),
+                        rs.getDouble("sale_price"),
+                        rs.getInt("stock_quantity"),
+                        rs.getInt("vendor_id")
+                ));
+            }
+
+            tableData = new Object[products.size()][9];
+            for (int i = 0; i < products.size(); i++) {
+                Product product = products.get(i);
+                tableData[i][0] = product.getProduct_id();
+                tableData[i][1] = product.getName();
+                tableData[i][2] = product.getCategory();
+                tableData[i][3] = product.getOriginalPrice();
+                tableData[i][4] = product.getSalePrice();
+                tableData[i][5] = product.getStockQuantity();
+                tableData[i][6] = product.getVendor_id();
+                tableData[i][7] = ""; // Empty string for Edit button column
+                tableData[i][8] = ""; // Empty string for Delete button column
+            }
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tableData;
+    }
 }
