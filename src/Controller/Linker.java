@@ -180,4 +180,11 @@ public class Linker {
     public boolean updateStock(String name, String company, double price, int quantitySold) {
         return dbObj.updateStockAfterBill(name, company, price, quantitySold);
     }
+public Object[][] getStockData() {
+        return dbObj.getStockData();
+    }
+
+    public Object[][] searchStock(String searchText) {
+        return dbObj.searchStock(searchText);
+    }
 }
