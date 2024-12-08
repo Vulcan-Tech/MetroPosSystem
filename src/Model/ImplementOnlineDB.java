@@ -8,7 +8,7 @@ import java.util.TimerTask;
 import java.net.InetAddress;
 
 public class ImplementOnlineDB {
-    private String onlineUrl ="jdbc:mysql://mysql-4bf656-ayazkahloon26-3b61.g.aivencloud.com:27831/MetroPosDB?ssl-mode=REQUIRED";
+    private String onlineUrl = "jdbc:mysql://mysql-4bf656-ayazkahloon26-3b61.g.aivencloud.com:27831/MetroPosDB?ssl-mode=REQUIRED";
     private String onlineUsername = "avnadmin";
     private String onlinePassword = "AVNS_lvZ5r8-iLSDkE7utjP2";
     protected String url = "jdbc:mysql://localhost:3306/MetroPosDB";
@@ -51,7 +51,7 @@ public class ImplementOnlineDB {
         createPendingQueriesTable();
         String query = "SELECT query FROM PendingQueries ORDER BY timestamp";
 
-        try (Connection conn = DriverManager.getConnection(url,username,password);
+        try (Connection conn = DriverManager.getConnection(url, username, password);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
@@ -171,6 +171,23 @@ public class ImplementOnlineDB {
         }
     }
 
+    // this function is just for adding
+    public void executeSpecialQuery(String query) {
+        if (isInternetAvailable()) {
+            try (Connection onlineConn = DriverManager.getConnection(onlineUrl, onlineUsername, onlinePassword);
+                 Statement onlineStmt = onlineConn.createStatement()) {
+                onlineStmt.execute(query);
+                System.out.println("Online DB execution successful");
+            } catch (SQLException e) {
+                System.out.println("Online execution failed: " + e.getMessage());
+                storePendingQuery(query);
+            }
+        } else {
+            System.out.println("No internet, storing query");
+            storePendingQuery(query);
+        }
+    }
+
     private void storePendingQuery(String query) {
         String insertQuery = "INSERT INTO PendingQueries (query) VALUES (?)";
         try (Connection conn = DriverManager.getConnection(url, username, password);
@@ -188,4 +205,5 @@ public class ImplementOnlineDB {
             internetCheckTimer.cancel();
         }
     }
+
 }
