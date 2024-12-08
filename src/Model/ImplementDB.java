@@ -387,4 +387,36 @@ public Object[][] getVendorsTableData() {
             return new Object[0][0];
         }
     }
+
+public int getProductStock(String name, String company, double price) {
+        String query = "SELECT stock_quantity FROM Products WHERE name = ? AND category = ? AND sale_price = ?";
+        try (
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, company);
+            pstmt.setDouble(3, price);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("stock_quantity");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting stock: " + e.getMessage());
+        }
+        return -1;
+    }
+
+    public boolean updateStockAfterBill(String name, String company, double price, int quantitySold) {
+        String query = "UPDATE Products SET stock_quantity = stock_quantity - ? WHERE name = ? AND category = ? AND sale_price = ?";
+
+                String onlineQuery = String.format(
+                        "UPDATE Products SET stock_quantity = stock_quantity - %d " +
+                                "WHERE name = '%s' AND category = '%s' AND sale_price = %f",
+                        quantitySold, name, company, price
+                );
+                onlineDB.executeQuery(onlineQuery);
+                return true;
+
+    }
 }
