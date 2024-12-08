@@ -343,4 +343,24 @@ public Object[][] getVendorsTableData() {
 
         return tableData;
     }
+
+    public Object[][] getProductsforBill() {
+        ArrayList<Object[]> productList = new ArrayList<>();
+        String query = "SELECT name, category, sale_price FROM Products";
+        try (PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Object[] product = new Object[4];
+                product[0] = rs.getString("name");
+                product[1] = rs.getString("category");
+                product[2] = rs.getDouble("sale_price");
+                product[3] = "Add";
+                productList.add(product);
+            }
+            return productList.toArray(new Object[0][]);
+        } catch (SQLException e) {
+            System.out.println("Error fetching products: " + e.getMessage());
+            return null;
+        }
+    }
 }
