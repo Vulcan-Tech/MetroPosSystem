@@ -144,4 +144,15 @@ public class Linker {
     public boolean saveBill(ArrayList<Object[]> billItems) {
         return dbObj.saveBill(billItems);
     }
+    public double[] getDailySales(int branchId) {
+        return dbObj.getDailySales(branchId);
+    }
+
+    public double[] getWeeklySales(int branchId) {
+        return dbObj.getWeeklySales(branchId);
+    }
+
+    public double[] getMonthlySales(int branchId) {
+        return dbObj.getMonthlySales(branchId);
+    }
 }
