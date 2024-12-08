@@ -185,4 +185,19 @@ public Object[][] getVendorsTableData() {
 
         return tableData;
     }
+
+    public boolean addProductData(String name, String category, double orgprice, double salesprice, int stockqty, int vendor_id) {
+        String insertBranchSQL = "INSERT INTO Products (name,category,original_price,sale_price,stock_quantity,vendor_id) VALUES (?, ?, ?, ?, ?, ?)";
+
+
+                String onlineQuery = String.format(
+                        "INSERT INTO Products (name,category,original_price,sale_price,stock_quantity,vendor_id) " +
+                                "VALUES ('%s', '%s', %f, %f, %d, %d)",
+                        name, category, orgprice, salesprice, stockqty, vendor_id
+                );
+                onlineDB.executeQuery(onlineQuery);
+                System.out.println("Product added successfully.");
+                return true;
+
+    }
 }
